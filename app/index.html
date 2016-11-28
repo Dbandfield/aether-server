@@ -1,0 +1,47 @@
+<html> 
+<body>
+<h1>Connectivity</h1>
+<input type="button" name="Turn on LED" id="LED_on"></input>
+<input type="button" name="Turn off LED" id="LED_off"></input>
+</body>
+
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script>
+
+  $(document).ready(function()
+  {
+	
+	var ws = new WebSocket('ws://connectivity-92668.onmodulus.net/');
+	
+	ws.onopen = function(){
+	
+		console.log('Connected.');
+		ws.send('Hi there, server.')
+	};
+	
+	ws.onmessage = function(data, mask){
+	
+		console.log(data);
+	};
+	
+	$("#LED_on").click(function(){
+		console.log('lOn');
+	
+		ws.send('on');
+	
+	});
+	
+	$("#LED_off").click(function(){
+		console.log('lOff');
+		ws.send('off');
+		
+	});
+  });
+	
+</script>
+</html>
+
+
