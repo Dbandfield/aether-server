@@ -1,26 +1,76 @@
 <html> 
-<body>
-<h1>Connectivity</h1>
-<a href="/mcusim-button/index.html"> Button Sim </a> 
-<br>
-<a href="/mcusim-led/index.html"> LED sim </a>
-<br> 
-<br>
-<h2> List of Senders </h2>
-<br>
-<ul id="list-of-senders"></ul>
-<br>
-<h2> List of Receivers </h2>
-<br>
-<ul id="list-of-senders"></ul>
+	<head>
 
-</body>
+		<link rel="stylesheet" href="/style/style-main.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<title> Aether </title>
+		
+	</head>
 
-<script
-  src="https://code.jquery.com/jquery-3.1.1.min.js"
-  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-  crossorigin="anonymous"></script>
-<script src="scripts/main.js"></script>
+	<body>
+		<div class="header">
+			<div class="row">
+				<div class="col-md-12">
+					<h1>Aether</h1>
+				</div>
+				<div class="col-md-6">
+					<a href="/mcusim-button/index.html"> Button Sim </a> 
+				</div>
+				<div class="col-md-6">
+					<a href="/mcusim-led/index.html"> LED sim </a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="main-page">
+			<div class="row">
+				<div class="col-md-4 sidebar">
+					<h2 class="sidebar-title"> List of Connections </h2>
+					<br>
+					<div class="sender-list">
+						<h3 class="sidebar-title"> Senders </h3>
+						<br>
+						<div class="connection-list">
+						</div>
+				
+					</div>
+					<div class="receiver-list">
+						<h3 class="sidebar-title"> Receivers </h3>
+						<br>
+						<div class="connection-list">
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-7 main-panel">
+					<div class="row connection-details">
+						<div class="col-md-12 connection-details-title"> 
+							<h2>Connection Details</h2>
+						</div>
+						<div class="col-md-6 connection-details-info">
+							<h4> Select a connection from the list on the left
+							     to see it's details </h4>
+						</div>
+						<div class="col-md-6 connection-details-selection">
+						</div>
+						
+					</div>
+				</div>		
+			</div>
+		</div>
+		
+
+
+	</body>
+
+	<script
+	  src="https://code.jquery.com/jquery-3.1.1.min.js"
+	  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	  crossorigin="anonymous"></script>
+	<script src="scripts/message-handler.js"></script>
+	<script src="scripts/html-updater.js"></script>
+	<script src="scripts/main.js"></script>
+	
 </html>
 
 

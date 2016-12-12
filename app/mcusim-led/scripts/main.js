@@ -10,7 +10,7 @@ $(document).ready(function(){
 	var url = 'ws://connectivity-92668.onmodulus.net/';
 	var localUrl = 'ws://localhost:3000';
 	/* Create a websocket */
-	var ws = new WebSocket(url);
+	var ws = new WebSocket(localUrl);
 	/* Create an object to store client details */
 	var clientConfig = 
 	
