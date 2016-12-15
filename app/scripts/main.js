@@ -26,6 +26,19 @@ $(document).ready(function()
 			dataType    : ""
 		}
 	};
+	/* Create an object to store new connection details. 
+	 * This will be used to send a message to the server when the user sets up
+	 * a new connection
+	 */
+	var newConn = 
+	{
+		messageType    : "new connection",
+		messageContent : 
+		{
+			receiver : "",
+			sender   : ""
+		}
+	};
 	
 	/* List of Senders and Receivers */
 	var senders   = [];
@@ -34,6 +47,22 @@ $(document).ready(function()
 	/* Utility objects from external scripts */
 	var messageHandler = new MessageHandler();
 	var htmlUpdater    = new HtmlUpdater();
+	
+	/* setup objects */
+	htmlUpdater.onConnSetup(function(r, s)
+	{
+		if(typeof(r) != "string" ||
+		   typeof(s) != "string")
+		{
+			console.error("Wrong types");
+			return false;
+		}
+		newConn.messageContent.receiver = r;
+		newConn.messageContent.sender = s;
+		newConnJSON = JSON.stringify(newConn);
+		ws.send(newConnJSON);
+		return true;
+	});
 	
 	/* When connection is established */
 	ws.onopen = function(){

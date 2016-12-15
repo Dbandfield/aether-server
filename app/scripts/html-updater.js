@@ -34,6 +34,9 @@ function HtmlUpdater()
 	/* An array of sender names for the connection selection panel to use */
 	this.selectionArray = [];
 	
+	/* A function to run when a new connection is setup */
+	this.connSetupFunction = function(r, s){};
+	
 	/* ---------------------------------------------------------------------- */
 	/* FUNCTIONS                                                              */
 	/* ---------------------------------------------------------------------- */
@@ -56,6 +59,29 @@ function HtmlUpdater()
 		 
 		return true;
 	 }
+	 
+	/* Description : Provide a function to run when a new connection has been
+	 *               set up. The function you provide will be passed two 
+	 *               arguments. The first is the name of the receiver involved,
+	 *               and the second is the name of the sender involved. Please
+	 *               provide a function that will take these two strings as 
+	 *               arguments.
+	 * Arguments   : A function
+	 * Returns     : True if successful, false otherwise
+	 */	
+	 this.onConnSetup = function(fn)
+	 {
+		 /* Check if it's a function */
+		 if(typeof(fn) != "function")
+		 {
+			 console.error("Argument supplied is not a function");
+			 return false;
+		 }
+		 
+		 this.connSetupFunction = fn;
+		 return true;
+	 }
+	 
 	 
 	 /* PRIVATE FUNCTIONS */
 	 
@@ -170,7 +196,7 @@ function HtmlUpdater()
 			{
 				if(myself.senders[i].name == search)
 				{
-					myself.setConnDetails(search, "receiver", myself.senders[i].receivers);
+					myself.setConnDetails(search, "sender", myself.senders[i].receivers);
 					
 					/* Senders don't choose connections, so clear the selection
 					 * panel.
@@ -191,6 +217,37 @@ function HtmlUpdater()
 		});
 	}
 	
+	/* Description : Add on click functionality to entries in the connection
+	 *               selection list. Clicking on one will set that as the new
+	 *               sender for the current connection.
+	 * Arguments   : None
+	 * Returns     : True if successful, false otherwise
+	 */	
+	this.setUpConnSelButtons = function()
+	{
+		/* Set the on click functionaility of all buttons in the connection
+		 * selection table 
+		 */
+		$(".connection-selection button").click(function()
+		{
+			/* Identify the connection that corresponds to the button */
+			for(var i in myself.senders)
+			{
+				/* if found */
+				if($(this).attr("id") == myself.senders[i].name)
+				{
+					/* Call the function provided */
+					myself.connSetupFunction(myself.connDetailsCur.toLowerCase(),
+												myself.senders[i].name);
+					return true;
+				}
+			}
+			
+			/* If we are still here something has gone wrong */
+			console.error("Sender not found");
+			return false;
+		});
+	}
 	/* Description : Set the details of the connection details panel.
 	 * Arguments   : Name(string) of device, type(string) of connection and 
 	 *               an array of it's connections (strings)
@@ -228,6 +285,7 @@ function HtmlUpdater()
 			/* indicate that the panel is now active */
 			this.connDetailsActive = true;
 			this.connDetailsCur = name;
+			this.connDetailType = type;
 			
 			return true;
 		}
@@ -236,7 +294,7 @@ function HtmlUpdater()
 			/* Clear the details panel */
 			$(".connection-details-info").empty();
 			/* The html. Name header, plus list of connections */
-			textToAppend += "<h3> " + name + "</h3>";
+			textToAppend += "<h3 class=\"name\"> " + name + "</h3>";
 			textToAppend += "<h4>"
 			textToAppend += "Sender"
 			textToAppend += "</h4>";
@@ -272,9 +330,9 @@ function HtmlUpdater()
 		}
 		 var textToAppend = ""; 
 		 
-		 textToAppend += "<h2> Connection Selection </h2>";
+		 textToAppend += "<h3> Connection Selection </h3>";
 		 
-		 textToAppend += "<table>";
+		 textToAppend += "<table class=\"connection-selection\">";
 		 
 		 /* go through each sender */
 		 for(var i in nArray)
@@ -282,11 +340,13 @@ function HtmlUpdater()
 			 if(typeof(nArray[i]) == "string")
 			 {
 				 textToAppend += "<tr>";
-				 textToAppend += "<td>"
+				 textToAppend += "<td>";
 				 textToAppend += nArray[i];
 				 textToAppend += "</td>";
-				 textToAppend += "<td>"
-				 textToAppend += "<button type=\"button\">";
+				 textToAppend += "<td>";
+				 textToAppend += "<button type=\"button\" id=\"";
+				 textToAppend += nArray[i];
+				 textToAppend += "\">";
 				 textToAppend += "Connect";
 				 textToAppend += "</button>";
 				 textToAppend += "</td>";
@@ -304,6 +364,9 @@ function HtmlUpdater()
 		 
 		 $(".connection-details-selection").empty();
 		 $(".connection-details-selection").append(textToAppend);
+		 
+		 /* Set up buttons */
+		 this.setUpConnSelButtons();
 	}
 	
 	
@@ -321,7 +384,8 @@ function HtmlUpdater()
 			{
 				if(this.senders[i].name == this.connDetailsCur)
 				{
-					console.log("S: found");
+					/* create array of receivers */
+					console.log(this.senders[i].receivers);
 					/* Update the details */
 					this.setConnDetails(this.connDetailsCur, 
 										"sender", 
@@ -336,20 +400,20 @@ function HtmlUpdater()
 			{
 				if(this.receivers[i].name == this.connDetailsCur)
 				{
-					console.log("R: found");
+					/* convert sender to array */
+					var a = [this.receivers[i].sender];
 					/* Update the details */
 					this.setConnDetails(this.connDetailsCur, 
 										"receiver", 
-										this.receivers[i].sender);
+										a);
 					/* We're done! */
 					return;
 				}
 			}
 			
-			/* If we're still here, the connection was found. Deactivate the 
+			/* If we're still here, the connection was not found. Deactivate the 
 			 * connection details panel
 			 */
-			 console.log("None");
 			this.deactivateConnDetails();
 			return;
 			
