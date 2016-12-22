@@ -10,7 +10,7 @@ $(document).ready(function(){
 	var url = 'ws://connectivity-92668.onmodulus.net/';
 	var localUrl = 'ws://localhost:3000';
 	/* Create a websocket */
-	var ws = new WebSocket(localUrl);
+	var ws = new WebSocket(url);
 	/* Create an object to store client details */
 	var clientConfig = 
 	
@@ -44,49 +44,23 @@ $(document).ready(function(){
 	{
 		
 		console.log(data.data);
-		/* Create an object */
-		try
+		if(data.data == "pulse")
 		{
-			var msgObject = JSON.parse(data.data);
-		}
-		catch(err)
-		{
-			console.log(err);
-			return false;
-		}
-
-		if(msgObject.hasOwnProperty("messageType"))
-		{
-			if(msgObject.messageType == "reading")
+			/* Turn led to alternate state */
+			ledOn = !ledOn;
+			
+			/* Change image appropriately */
+			if(ledOn)
 			{
-				if(msgObject.hasOwnProperty("messageContent"))
-				{
-					if(msgObject.messageContent.hasOwnProperty("reading"))
-					{
-						if(msgObject.messageContent.reading == "pulse")
-						{
-							/* Turn led to alternate state */
-							ledOn = !ledOn;
-							
-							/* Change image appropriately */
-							if(ledOn)
-							{
-								$("#led-img").attr("src", 
-												   "images/led-on.jpg");
-							}
-							else
-							{
-								$("#led-img").attr("src", 
-												   "images/led-off.jpg");
-							}
-						}
-					}
-				}
+				$("#led-img").attr("src", 
+								   "images/led-on.jpg");
+			}
+			else
+			{
+				$("#led-img").attr("src", 
+								   "images/led-off.jpg");
 			}
 		}
-						
-			
-		
 		
 	};
 	
