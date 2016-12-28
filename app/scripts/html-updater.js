@@ -237,7 +237,7 @@ function HtmlUpdater()
 				if($(this).attr("id") == myself.senders[i].name)
 				{
 					/* Call the function provided */
-					myself.connSetupFunction(myself.connDetailsCur.toLowerCase(),
+					myself.connSetupFunction(myself.connDetailsCur,
 												myself.senders[i].name);
 					return true;
 				}

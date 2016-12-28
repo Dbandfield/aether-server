@@ -217,7 +217,7 @@ module.exports = exports = function AetherConnections()
 				}
 				socket.removeAllListeners();
 				socket.on('message', senderFunction);
-				
+				socket.on('close', function(){myself.closeConnection(socket)});
 				/*Success!*/
 				return true;
 			}
@@ -241,6 +241,7 @@ module.exports = exports = function AetherConnections()
 				 */
 				 socket.removeAllListeners();
 				socket.on('message', function(data, flags){});
+				socket.on('close', function(){myself.closeConnection(socket)});
 				
 				/* Success!*/
 				return true;
