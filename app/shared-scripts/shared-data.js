@@ -1,5 +1,5 @@
 /* Potential Server Addresses */
-var _webUrl = 'ws://aether-iot.herokuapp.com/';
+var _webUrl = 'wss://aether-iot.herokuapp.com/';
 var _localUrl = 'ws://localhost:3000';
 var _lanUrl = 'ws://192.168.2.104:3000';
 
