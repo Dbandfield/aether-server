@@ -4,7 +4,8 @@
  */
  
  /* We're using jQuery. Wait until document has loaded. */
-$(document).ready(function(){
+$(document).ready(function()
+{
 	
 	/* Our server */
 	//var url = 'ws://connectivity-92668.onmodulus.net/';
@@ -19,15 +20,19 @@ $(document).ready(function(){
 		messageContent  : 
 		{
 			device      : "nodeMCU",
-			name        : "button1",
+			name        : "textS",
 			mode        : "send",
-			dataType    : "pulse"
+			dataType    : "text"
 		}
 	};
+	
+	/* A var to store the user's message */
+	var tMessage = "";
 		
 	
 	/* When connection is established */
-	ws.onopen = function(){
+	ws.onopen = function()
+	{
 	
 		console.log('Connected to ' + url);
 		/* Convert client config details to JSON and then
@@ -43,21 +48,13 @@ $(document).ready(function(){
 		console.log(data);
 	};
 	
-	/* When the button is pressed, change the image */
-	
-	$("#button-img").mousedown(function(){
-		
-		$(this).attr("src", "images/button-closed.jpg");
-		
-	});
-	
-	/* When it is released change it back, and also
-		send a message to the server */
-		
-	$("#button-img").mouseup(function(){
-	
-		$(this).attr("src", "images/button-open.jpg");
-		ws.send("pulse");
+	$("#submit-message").click(function()
+	{
+		console.log("Sending message");
+		tMessage = $("#text-message").val();
+		$("#text-message").val("");
+		console.log(tMessage);
+		ws.send(tMessage);
 		
 	});
 	

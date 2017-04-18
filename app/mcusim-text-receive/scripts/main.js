@@ -19,9 +19,9 @@ $(document).ready(function(){
 		messageContent  : 
 		{
 			device      : "nodeMCU",
-			name        : "button1",
-			mode        : "send",
-			dataType    : "pulse"
+			name        : "textR",
+			mode        : "receive",
+			dataType    : "text"
 		}
 	};
 		
@@ -39,26 +39,10 @@ $(document).ready(function(){
 	
 	ws.onmessage = function(data, mask)
 	{
-	
-		console.log(data);
+		console.log(data.data);
+		$("#text-display").html(data.data);
 	};
 	
-	/* When the button is pressed, change the image */
-	
-	$("#button-img").mousedown(function(){
-		
-		$(this).attr("src", "images/button-closed.jpg");
-		
-	});
-	
-	/* When it is released change it back, and also
-		send a message to the server */
-		
-	$("#button-img").mouseup(function(){
-	
-		$(this).attr("src", "images/button-open.jpg");
-		ws.send("pulse");
-		
-	});
+
 	
 });

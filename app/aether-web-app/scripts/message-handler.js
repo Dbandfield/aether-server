@@ -1,14 +1,14 @@
-/* This object is used to handle messages. 
+/* This object is used to handle messages.
  * It checks for message validity and processes
  * the data. */
 
-function MessageHandler()
+module.exports = function MessageHandler()
 {
 	/* -------------------------------------------------- */
 	/* OBJECT PROPERTIES                                  */
 	/* -------------------------------------------------- */
-	
-	/* The Received Message. It should come in a specific 
+
+	/* The Received Message. It should come in a specific
 	 * JSON format */
 	this.rMessage = "";
 	/* If the received message is valid it will be converted
@@ -19,18 +19,18 @@ function MessageHandler()
 	 */
 	this.senders   = [];
 	this.receivers = [];
-	
-	
-	
+
+
+
 	/* -------------------------------------------------- */
 	/* OBJECT FUNCTIONS                                   */
 	/* -------------------------------------------------- */
-	
+
 	/* PUBLIC FUNCTIONS */
-	
-	/* Description : This is the main function for processing 
+
+	/* Description : This is the main function for processing
 	 *               messages.
-	 * Arguments   : Provide it with a string that has been 
+	 * Arguments   : Provide it with a string that has been
 	 *               received from the server using websockets.
 	 * Returns     : True if the message was valid and was
 	 *               successfully processed. False otherwise.
@@ -40,6 +40,7 @@ function MessageHandler()
 		try
 		{
 			var tempMessage = JSON.parse(msg);
+			console.log(tempMessage);
 		}
 		catch(err)
 		{
@@ -47,28 +48,28 @@ function MessageHandler()
 			console.error(err);
 			return false;
 		}
-		
+
 		if(!this.isValidMessage(tempMessage))
 		{
 			console.error("The JSON provided was improperly formatted")
 			return false;
 		}
-		
+
 		/* If the message is good, write over the previous message data */
 		this.oMessage = tempMessage;
-		
+
 		this.senders   = this.oMessage.messageContent.senderList;
 		this.receivers = this.oMessage.messageContent.receiverList;
-		
+
 		return true;
 	};
-	
+
 	/* Description : Returns the array of senders
 	 * Arguments   : None
-	 *  
+	 *
 	 * Returns     : The array of senders
 	 *
-	 */	
+	 */
 	this.getSenders = function()
 	{
 		return this.senders;
@@ -77,54 +78,54 @@ function MessageHandler()
 	 * Arguments   : None
 	 * Returns     : The array of receivers, or false if it is empty.
 	 *
-	 */	
+	 */
 	this.getReceivers = function()
 	{
 		return this.receivers;
 	}
-	
-	
+
+
 	/* PRIVATE FUNCTIONS */
-	
-	/* Description : Checks whether the 
+
+	/* Description : Checks whether the
 	 *               argument string is correctly formatted.
 	 *				 See readme for the correct formatting.
-	 *  Arguments  : The JSON from the server, processed as 
+	 *  Arguments  : The JSON from the server, processed as
 	 *               an object.
-	 *  
+	 *
 	 *  Returns    : True if valid. False otherwise.
 	 *
 	 */
 	 this.isValidMessage = function(msg)
 	 {
-		/* Has message type property? */ 
+		/* Has message type property? */
 		if(!msg.hasOwnProperty("messageType"))
 		{
 			console.error("Message does not have message type property");
 			return false;
 		}
-		
+
 		/* Is connection update? */
 		if(msg.messageType != "connUpdate")
 		{
 			console.error("Message type is not connection update");
 			return false;
 		}
-		
+
 		/* Has message content? */
 		if(!msg.hasOwnProperty("messageContent"))
 		{
 			console.error("Message does not have message content property");
 			return false;
 		}
-		
+
 		/* is an object? */
 		if(typeof(msg.messageContent) != "object")
 		{
 			console.error("Message content is not an object");
-			return false;	
+			return false;
 		}
-		
+
 		/* has sender list and receiver list? */
 		if(!(msg.messageContent.hasOwnProperty("senderList") &&
 		   msg.messageContent.hasOwnProperty("receiverList")))
@@ -132,7 +133,7 @@ function MessageHandler()
 			console.error("Message content does not have a sender list and a receiver list");
 			return false;
 		}
-		
+
 		/* are the lists of type array? */
 		if(!(Array.isArray(msg.messageContent.senderList) &&
 			Array.isArray(msg.messageContent.receiverList)))
@@ -140,7 +141,7 @@ function MessageHandler()
 			console.error("Sender list and receiver list are not arrays");
 			return false;
 		}
-			
+
 		/* go through the array and check if everything
 		 * is an object */
 		for(var i in msg.messageContent.senderList)
@@ -150,76 +151,182 @@ function MessageHandler()
 				console.error("Element " + i + " in senderList is not an object");
 				return false;
 			}
-									
+
 			/* Check if the object has the expected properties: name and receivers */
 			if(!(msg.messageContent.senderList[i].hasOwnProperty("name") &&
-				msg.messageContent.senderList[i].hasOwnProperty("receivers")))
+				msg.messageContent.senderList[i].hasOwnProperty("mode") &&
+				msg.messageContent.senderList[i].hasOwnProperty("dataType") &&
+				msg.messageContent.senderList[i].hasOwnProperty("connections")))
 			{
-				console.error("Object " + i + " in senderList does not have expected" + 
+				console.error("Object " + i + " in senderList does not have expected" +
 				" properties");
+				console.log(msg.messageContent.senderList[i]);
 				return false;
 			}
-									
+
 			/* check name is string */
 			if(typeof(msg.messageContent.senderList[i].name) != "string")
 			{
 				console.error("Name is not string");
 				return false;
 			}
-			
-			/* check list of receivers is array */
-			if(!(Array.isArray(msg.messageContent.senderList[i].receivers)))
+
+			/* check mode is string */
+			if(typeof(msg.messageContent.senderList[i].mode) != "string")
 			{
-				console.error("Receivers is not an array");
+				console.error("Mode is not string");
 				return false;
 			}
-			
-			/* check if elements of array are strings */
-			for(var j in msg.messageContent.senderList[i].receivers)
+
+			/* check dataType is string */
+			if(typeof(msg.messageContent.senderList[i].dataType) != "string")
 			{
-				if(typeof(msg.messageContent.senderList[i].receivers[j])!= "string")
+				console.error("DataType is not string");
+				return false;
+			}
+
+			/* check list of receivers is array */
+			if(!(Array.isArray(msg.messageContent.senderList[i].connections)))
+			{
+				console.error("Connections is not an array");
+				return false;
+			}
+
+			/* check if elements of array are objects */
+			for(var j in msg.messageContent.senderList[i].connections)
+			{
+				if(typeof(msg.messageContent.senderList[i].connections[j])!= "object")
 				{
-					console.error("Element " + j + " is not a string");
+					console.error("Element " + j + " is not an object");
+					return false;
+				}
+			}
+
+			/* Check if objects in receivers array have correct attributes */
+			for(var j of msg.messageContent.senderList[i].connections)
+			{
+				if(!(j.hasOwnProperty("name") &&
+					j.hasOwnProperty("mode") &&
+					j.hasOwnProperty("dataType")))
+				{
+					console.error("Object " + i + " in senderList does not have expected" +
+					" connections properties");
+					return false;
+				}
+			}
+
+			/* Check type of those attributes */
+			for(var j of msg.messageContent.senderList[i].connections)
+			{
+				/* check name is string */
+				if(typeof(j.name) != "string")
+				{
+					console.error("receiver list Name is not string");
+					return false;
+				}
+
+				/* check mode is string */
+				if(typeof(j.mode) != "string")
+				{
+					console.error("receiver list Mode is not string");
+					return false;
+				}
+
+				/* check dataType is string */
+				if(typeof(j.dataType) != "string")
+				{
+					console.error("receiver list DataType is not string");
 					return false;
 				}
 			}
 		}
-												
+
 		/* go through the other array and check if everything
 		 * is an object */
-		for(var i in msg.messageContent.receiverList)
+		for(var i of msg.messageContent.receiverList)
 		{
-			if(typeof(msg.messageContent.receiverList[i]) != "object")
+			if(typeof(i) != "object")
 			{
-				console.error("Element " + i + " in receiverList is not an object");
+				console.error("Element in receiverList is not an object");
 				return false;
 			}
-			
+
 			/* Check if the object has the expected properties: name and receivers */
-			if(!(msg.messageContent.receiverList[i].hasOwnProperty("name") &&
-				msg.messageContent.receiverList[i].hasOwnProperty("sender")))
+			if(!(i.hasOwnProperty("name") &&
+				i.hasOwnProperty("mode") &&
+				i.hasOwnProperty("dataType") &&
+				i.hasOwnProperty("connections")))
 			{
-				console.error("Object " + i + " in receiverList does not have expected" + 
+				console.error("Object in receiverList does not have expected" +
 				" properties");
 				return false;
 			}
-			
+
 			/* check name is string */
-			if(typeof(msg.messageContent.receiverList[i].name) != "string")
+			if(typeof(i.name) != "string")
 			{
 				console.error("Name is not string");
 				return false;
 			}
-			/* check sender is string */
-			if(typeof(msg.messageContent.receiverList[i].sender) != "string")
+
+			/* check mode is string */
+			if(typeof(i.mode) != "string")
 			{
-				console.error("Sender is not an string");
+				console.error("Mode is not string");
 				return false;
 			}
+
+			/* check dataType is string */
+			if(typeof(i.dataType) != "string")
+			{
+				console.error("DataType is not string");
+				return false;
+			}
+			/* check sender is object */
+			if(!Array.isArray(i.connections))
+			{
+				console.error("Connections is not an array");
+				return false;
+			}
+
+			for(var j of i.connections)
+			{
+				/* Check properties of sender object */
+				if(!(j.hasOwnProperty("name") &&
+					j.hasOwnProperty("mode") &&
+					j.hasOwnProperty("dataType")))
+				{
+					console.error("Object in receiverList does not have expected" +
+					" properties");
+					return false;
+				}
+
+				/* Check types of sender object properties */
+				/* check name is string */
+				if(typeof(j.name) != "string")
+				{
+					console.error("Name is not string");
+					return false;
+				}
+
+				/* check mode is string */
+				if(typeof(j.mode) != "string")
+				{
+					console.error("Mode is not string");
+					return false;
+				}
+
+				/* check dataType is string */
+				if(typeof(j.dataType) != "string")
+				{
+					console.error("DataType is not string");
+					return false;
+				}
+			}
+
 		}
-		
+
 		/* If the function hasn't returned anything at this point, it is valid. Return true */
 		return true;
 	 }
 }
-					

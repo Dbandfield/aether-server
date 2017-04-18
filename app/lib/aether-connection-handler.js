@@ -4,29 +4,31 @@
 module.exports = exports = function AetherConnections()
 {
 	/* To maintain a reference to this object. The this keyword changes meaning
-	 * when passed to a callback function 
+	 * when passed to a callback function
 	 */
 	myself = this;
-	
+
 	/*----- OBJECT PROPERTIES -----*/
 	/* A list of senders, receivers and controllers */
 	this.senders     = [];
-	this.receivers   = [];	
+	this.receivers   = [];
 	this.controllers = [];
-	
+	/* Valid Data Types */
+	this.validDataTypes = ["pulse", "text", "number", "boolean"]
+
 	/*----- OBJECT METHODS -----*/
-	
+
 	/*----- Public -----*/
-	
+
 	/* Description: Processes a received message.
 	   Arguments:   A Received Message, and the socket it came from.
 	   Returns:     Nothing
-     */	
+     */
 	this.processMessage = function(msg, socket)
 	{
 		/* try parsing the message */
 		var parsedMessage = this.parseMessage(msg);
-		
+
 		/* Parsed correctly? */
 		if(parsedMessage)
 		{
@@ -40,8 +42,13 @@ module.exports = exports = function AetherConnections()
 			else if(parsedMessage.messageType == "new connection")
 			{
 				this.updateConnections(parsedMessage.messageContent.receiver,
-									   parsedMessage.messageContent.sender);
+									   parsedMessage.messageContent.sender,
+								   	   parsedMessage.messageContent.remove);
 				this.updateControllers();
+			}
+			else if(parsedMessage.messageType == "disconnection")
+			{
+				this.disconnect(parsedMessage.messageContent.name);
 			}
 			else
 			{
@@ -57,79 +64,85 @@ module.exports = exports = function AetherConnections()
 	/* Description: When the connection is closed, update everything.
 	   Arguments:   The socket that was closed
 	   Returns:     Nothing
-     */		
+     */
 	this.closeConnection = function(socket)
 	{
-		for(var i in this.senders)
+		/* Search senders */
+		var indexToRemove1 = this.senders.findIndex(obj => obj.clientSocket == socket);
+
+		if(indexToRemove1 != -1) // If index found in senders
 		{
-			if(this.senders[i].clientSocket == socket)
+			/* Go through its connections*/
+			for(var i of this.senders[indexToRemove1].clientConnections)
 			{
-				/* Remove this from connected connections. */
-				for(var j in this.senders[i].clientReceivers)
-				{
-					for(var k in this.receivers)
-					{
-						if(this.senders[i].clientReceivers[j].name == 
-							this.receivers[k].clientName)
-							{
-								this.receivers[k].clientSender.name = "";
-								this.receivers[k].clientSender.socket = null;
-							}
-					}
-				}
-				this.senders.splice(i, 1);
-				break;
+				var nameToFind = i.name;
+				/* Get Object from recv list */
+				var ob = this.receivers.find(obj => obj.clientName == nameToFind);
+				/* Find match */
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.senders[indexToRemove1].clientName);
+				/* Remove from its connections */
+				ob.clientConnections.splice(indexToRemove2, 1);
 			}
+			/* Remove client */
+			this.senders.splice(indexToRemove1, 1);
+			/* Update the controllers */
+			this.updateControllers();
+			return true;
 		}
-		for(var i in this.receivers)
+
+		/* If we didn't return, search receivers */
+		indexToRemove1 = this.receivers.findIndex(obj => obj.clientSocket == socket);
+
+		if(indexToRemove1 != -1) // If index found in receivers
 		{
-			if(this.receivers[i].clientSocket == socket)
+			/* Go through its connections*/
+			for(var i of this.receivers[indexToRemove1].clientConnections)
 			{
-				if(this.receivers[i].clientSender.name != "")
-				{
-					for(var j in this.senders)
-					{
-						for(var k in this.senders[j].clientReceivers)
-						{
-							if(this.senders[j].clientReceivers[k].name ==
-							   this.receivers[i].clientName)
-							   {
-								   this.senders[j].clientReceivers.splice(k, 1);
-							   }
-						}
-					}
-				}
-				this.receivers.splice(i, 1);
-				break;
+				var nameToFind = i.name;
+				/* Get Object from recv list */
+				var ob = this.senders.find(obj => obj.clientName == nameToFind);
+				/* Find match */
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.receivers[indexToRemove1].clientName);
+				/* Remove from its connections */
+				ob.clientConnections.splice(indexToRemove2, 1);
 			}
+			/* Remove client */
+			this.receivers.splice(indexToRemove1, 1);
+			/* Update the controllers */
+			this.updateControllers();
+			return true;
 		}
-		for(var i in this.controllers)
+
+		/* If we still havent returned, seach controllers */
+		indexToRemove1 = this.controllers.findIndex(i => i.clientSocket == socket);
+
+		if(indexToRemove1 != -1)
 		{
-			if(this.controllers[i].clientSocket == socket)
-			{
-				console.log("Removing " + this.controllers[i].clientName +
-								" from receivers list");
-				this.controllers.splice(i, 1);
-				break;
-			}
+			this.controllers.splice(indexToRemove1, 1);
+			return true;
 		}
-		
-		/* Update the controllers */
-		this.updateControllers();		
+		else
+		{
+			console.error("The socket was not found when trying to remove the client")
+			return false;
+		}
+
+
+
 	}
-	
+
 	/*----- Private -----*/
-	
-	/* Description: Provide the function with a recieved message. It will 
+
+	/* Description: Provide the function with a recieved message. It will
 	                attempt to convert into a JSON.
 	   Arguments:   A Received Message.
-	   Returns:     A Parsed message as javascript object, or NULL if parsing 
-	                failed 
+	   Returns:     A Parsed message as javascript object, or NULL if parsing
+	                failed
      */
 	this.parseMessage = function(msg)
 	{
 		var parsed = null;
-		/* Try to parse the message into a JS object. If this 
+		/* Try to parse the message into a JS object. If this
 		 * fails it means the message was not JSON */
 		try
 		{
@@ -137,35 +150,35 @@ module.exports = exports = function AetherConnections()
 		}
 		catch(err)
 		{
-			console.log("[ACH] JSON parsing failed: ")
-			console.log(err);
+			console.error("[ACH] JSON parsing failed: ")
+			console.error(err);
 			return null;
 		}
-		
-		/* Check it has the correct properties. Note: further 
-		 * checks will have to be made based on the specific 
+
+		/* Check it has the correct properties. Note: further
+		 * checks will have to be made based on the specific
 		 * message type.
 		 */
 		if(parsed.hasOwnProperty("messageType"))
 		{
-				
+
 			if(parsed.hasOwnProperty("messageContent"))
 			{
-				
+
 				if(typeof(parsed.messageContent == "object"))
 				{
-					
+
 					/* Success */
 					return parsed;
 				}
 			}
 		}
-		
+
 		/* Not valid */
 		console.error("[ACH] Message has incorrect properties");
 		return null;
 	}
-	
+
 	/* Description: Configures the client with the message provided
 	   Arguments:   A configure message
 	   Returns:     true if successful, false otherwise
@@ -176,80 +189,122 @@ module.exports = exports = function AetherConnections()
 		if(msg.messageContent.hasOwnProperty("name") &&
 			msg.messageContent.hasOwnProperty("mode"))
 		{
+
 			/* Check for name uniqueness */
 			var uniqueName = this.checkName(msg.messageContent.name);
-			
+
 			/* Send? */
 			if(msg.messageContent.mode == "send")
 			{
-				/* add to the array */
-				this.senders.push(
+				/* Check validity of data type */
+				if(msg.messageContent.hasOwnProperty("dataType"))
 				{
-					clientName      : uniqueName,
-					clientSocket    : socket,
-					clientReading   : "",
-					clientReceivers : []
-				});
-
-				/* Because the client is now registered, we can give the socket
-				 * a new onMessage function. We are only listening for new data,
-				 * and for efficiency's sake are not checking it is of the right
-				 * type.
-				 */
-				function senderFunction(data, flags)
-				{
-					/* Look for this socket in senders */
-					for(var c in myself.senders)
+					/* Look for match with valid types */
+					for(var i of this.validDataTypes)
 					{
-						if(myself.senders[c].clientSocket == socket)
+						/* if match */
+						if(msg.messageContent.dataType == i)
 						{
-							for(var r in myself.senders[c].clientReceivers)
+							/* add to the array */
+							this.senders.push(
 							{
-								myself.senders[c]
-								      .clientReceivers[c]
-									  .socket.send(data);
+								clientName      : uniqueName,
+								clientMode		: msg.messageContent.mode,
+								clientDataType	: msg.messageContent.dataType,
+								clientSocket    : socket,
+								clientReading   : "",
+								clientConnections : []
+							});
+
+							/* Because the client is now registered, we can give the socket
+							 * a new onMessage function. We are only listening for new data,
+							 * and for efficiency's sake are not checking it is of the right
+							 * type.
+							 */
+							function senderFunction(data, flags)
+							{
+								/* Look for this socket in senders */
+								for(var c in myself.senders)
+								{
+									if(myself.senders[c].clientSocket == socket)
+									{
+										for(var r in myself.senders[c].clientConnections)
+										{
+											myself.senders[c]
+												  .clientConnections[r]
+												  .socket.send(data);
+										}
+
+									}
+								}
 							}
-							
-							console.log("Socket " + socket);
-							console.log("was sent " + data);
-						}
-					}
+							socket.removeAllListeners();
+							socket.on('message', senderFunction);
+							socket.on('close', function(){myself.closeConnection(socket)});
+							/*Success!*/
+							return true;
+							// break;
+						} // END DATA TYPE MATCH IF
+					}// END DATA MATCH FOR
+
+					console.error("[ACH] Invalid data type");
+					return false;
+				} // END DATA TYPE VAR CHECK IF
+				else
+				{
+					console.error("[ACH] No Data Type set")
+					return false;
 				}
-				socket.removeAllListeners();
-				socket.on('message', senderFunction);
-				socket.on('close', function(){myself.closeConnection(socket)});
-				/*Success!*/
-				return true;
 			}
 			/* Or receive? */
 			else if (msg.messageContent.mode == "receive")
 			{
-				
-				this.receivers.push(
+				/* Check validity of data type */
+				if(msg.messageContent.hasOwnProperty("dataType"))
 				{
-					clientName   : uniqueName,
-					clientSocket : socket,
-					clientSender : 
+					/* Look for match with valid types */
+					for(var i of this.validDataTypes)
 					{
-						name: "",
-						socket: null
+						/* if match */
+						if(msg.messageContent.dataType == i)
+						{
+
+							this.receivers.push(
+							{
+								clientName   	: uniqueName,
+								clientMode		: msg.messageContent.mode,
+								clientDataType	: msg.messageContent.dataType,
+								clientSocket 	: socket,
+								clientConnections	: []
+
+							});
+							/* Because the client is now registered, we can give the socket
+							 * a new onMessage function. (Nothing in it for now, because
+							 * there are no messages we need to process from receivers)
+							 */
+							 socket.removeAllListeners();
+							socket.on('message', function(data, flags){});
+							socket.on('close', function(){myself.closeConnection(socket)});
+
+							/* Success!*/
+							return true;
+							// break;
+						} // END DATA TYPE MATCH
 					}
-				});
-				/* Because the client is now registered, we can give the socket
-				 * a new onMessage function. (Nothing in it for now, because 
-				 * there are no messages we need to process from receivers)
-				 */
-				 socket.removeAllListeners();
-				socket.on('message', function(data, flags){});
-				socket.on('close', function(){myself.closeConnection(socket)});
-				
-				/* Success!*/
-				return true;
-			} 
+
+					console.error("[ACH] Invalid data type");
+					return false;
+				} // END DATA TYPE VAR CHECK IF
+				else
+				{
+					console.error("[ACH] No Data Type set")
+					return false;
+				}
+			}
 			/* Or controller? */
 			else if (msg.messageContent.mode == "controller")
 			{
-				
+
 				this.controllers.push(
 				{
 					clientName   : uniqueName,
@@ -263,19 +318,19 @@ module.exports = exports = function AetherConnections()
 			{
 				console.error("[ACH] Unrecognised type in config message");
 			}
-		} 
-		
-		/* If we haven't returned true yet, then the message 
-		 * object wasn't correctly formatted. Return false 
+		}
+
+		/* If we haven't returned true yet, then the message
+		 * object wasn't correctly formatted. Return false
 		 */
 		 console.error("[ACH] Unable to configure client");
 		return false;
 	}
-	
+
 	/* Description: Checks the name to see if it is unique
 	   Arguments:   A name
 	   Returns:     The orginal name, or if it wasn't unique, a new unique name
-     */	
+     */
 	this.checkName = function(name)
 	{
 		/* Haven't decided on uniqness yet */
@@ -291,16 +346,16 @@ module.exports = exports = function AetherConnections()
 		else
 		{
 			newName = name;
-		}		
-		
+		}
+
 		while(!nameDecided)
 		{
 			var unique = true;
-		
+
 			/* Check senders */
 			for(var i in this.senders)
 			{
-				
+
 				if(this.senders[i].clientName == newName)
 				{
 					unique = false;
@@ -319,10 +374,10 @@ module.exports = exports = function AetherConnections()
 					break;
 				}
 			}
-			
+
 			/* get a new suffix */
 			suffix ++;
-			
+
 			if(unique)
 			{
 				nameDecided = true;
@@ -331,86 +386,137 @@ module.exports = exports = function AetherConnections()
 		/* Success!*/
 		return newName;
 	}
-	
+
 	/* Description: Updates the connections to connect receiver "r" with sender
 					"s"
-	   Arguments:   The name of a receiver and the name of a sender
+	   Arguments:   The name of a receiver and the name of a sender, and
+	   				a boolean that if true, removes the connection rather
+					than setting it up
 	   Returns:     True if successful, false otherwise
-     */	
-	this.updateConnections = function(r, s)
+     */
+	this.updateConnections = function(r, s, remove)
 	{
 		/* Check args */
 		if(typeof(r) != "string" ||
-		   typeof(s) != "string")
+		   typeof(s) != "string" ||
+		   typeof(remove) != "boolean")
 		{
 			console.error("[ACH] Wrong types supplied to updateConnections");
 			return false;
 		}
-		
-		/* look for receiver */
-		for(var i in this.receivers)
+
+		var alreadyExists = false;
+
+		/* Check if the connection already exists */
+		/* loop through senders */
+		for(i of this.senders)
 		{
-			if(this.receivers[i].clientName == r)
+			/* If match */
+			if(i.clientName == s)
 			{
-				/* Look for sender */
-				for(var j in this.senders)
+				/* Loop through connections of match */
+				if(i.clientConnections.length > 0)
 				{
-					if(this.senders[j].clientName == s)
+					for(j of i.clientConnections)
 					{
-						/* First, if the receiver already is connected to a sender,
-						 * remove the receiver from that sender's list 
-						 */
-						if(this.receivers[i].clientSender.name != "")
+						/* If match */
+						if(j.name == r)
 						{
-							for(var k in this.senders)
-							{
-								if(this.senders[k].clientName == 
-										this.receivers[i].clientSender.name)
-								{
-									for(var ii in this.senders[k].clientReceivers)
-									{
-										if(this.senders[k].clientReceivers[ii].name == 
-											this.receivers[i].clientName)
-											{
-												this.senders[k].clientReceivers.splice(ii, 1);
-											}
-									}
-								}
-							}
+							/* Connections lready exists */
+							alreadyExists = true;
 						}
-						/* Set the references to eachother */
-						this.receivers[i].clientSender.name = this.senders[j].clientName;
-						this.receivers[i].clientSender.socket = this.senders[j].clientSocket;
-						this.senders[j].clientReceivers.push({name : this.receivers[i].clientName,
-														 socket : this.receivers[i].clientSocket});
-						return true;
 					}
 				}
-				console.error("[ACH] Sender " + s + " not found");
-				return false;
 			}
 		}
-		console.error("[ACH] Receiver " + r + " not found");
+
+		/* If the Connection already exists, and remove is true */
+		if(alreadyExists && remove)
+		{
+			/* Remove the Connection */
+			/* From Senders */
+			for(i of this.senders)
+			{
+				if(i.clientName == s)
+				{
+					for(j of i.clientConnections)
+					{
+						if(j.name == r)
+						{
+							i.clientConnections.splice(indexOf(j), 1)
+							break;
+						}
+					}
+				}
+			}
+
+			/* From Receivers */
+			for(i of this.receivers)
+			{
+				if(i.clientName == r)
+				{
+					for(j of i.clientConnections)
+					{
+						if(j.name == s)
+						{
+							i.clientConnections.splice(indexOf(j), 1)
+							return true;
+						}
+					}
+				}
+			}
+		} // END IF
+		/* Else if the connection does not already exist, and remove is false,
+		 * Setup the connection */
+		else if(!alreadyExists && !remove)
+		{
+			for(var i of this.senders)
+			{
+				if(i.clientName == s)
+				{
+					for(var j of this.receivers)
+					{
+						if(j.clientName == r)
+						{
+							i.clientConnections.push({
+								name : 		j.clientName,
+								mode : 		j.clientMode,
+								dataType: 	j.clientDataType,
+								socket : 	j.clientSocket
+							});
+
+							j.clientConnections.push({
+								name : 		i.clientName,
+								mode : 		i.clientMode,
+								dataType: 	i.clientDataType,
+								socket : 	i.clientSocket
+							});
+
+
+							return true;
+						}
+					}
+				}
+			}
+		}
 		return false;
-		
-		   
 	}
-	
-	/* Description: Updates the controllers with the latest connection 
+
+	/* Description: Updates the controllers with the latest connection
 					information.
 	   Arguments:   none
 	   Returns:     none
-     */	
+     */
 	this.updateControllers = function()
 	{
 		/* Prepare a message */
 		msg = 	{
 					messageType    : "connUpdate",
-					messageContent : 
+					messageContent :
 					{
 						senderList     : [],
 						receiverList   : []
-					} 
+					}
 				};
 		/* Populate the message with senders */
 		for(var j in this.senders)
@@ -418,15 +524,21 @@ module.exports = exports = function AetherConnections()
 			msg.messageContent.senderList.push(
 			{
 				name: this.senders[j].clientName,
-				receivers: []
+				mode: this.senders[j].clientMode,
+				dataType: this.senders[j].clientDataType,
+				connections: []
 			});
-			
-			for(var k in this.senders[j].clientReceivers)
+
+			for(var k in this.senders[j].clientConnections)
 			{
 				msg.messageContent
 				   .senderList[j]
-				   .receivers
-				   .push(this.senders[j].clientReceivers[k].name);
+				   .connections
+				   .push({
+					   		name: this.senders[j].clientConnections[k].name,
+							mode: this.senders[j].clientConnections[k].mode,
+							dataType: this.senders[j].clientConnections[k].dataType
+						});
 			}
 		}
 		/* Populate the message with receivers */
@@ -435,13 +547,54 @@ module.exports = exports = function AetherConnections()
 			msg.messageContent.receiverList.push(
 			{
 				name: this.receivers[j].clientName,
-				sender: this.receivers[j].clientSender.name
+				mode: this.receivers[j].clientMode,
+				dataType: this.receivers[j].clientDataType,
+				connections: []
 			});
+
+			for(var k in this.receivers[j].clientConnections)
+			{
+				msg.messageContent
+				   .receiverList[j]
+				   .connections
+				   .push({
+							name: this.receivers[j].clientConnections[k].name,
+							mode: this.receivers[j].clientConnections[k].mode,
+							dataType: this.receivers[j].clientConnections[k].dataType
+						});
+			}
 		}
 		/* Finally go through each controller and send the message */
 		for(var i in this.controllers)
 		{
 			this.controllers[i].clientSocket.send(JSON.stringify(msg));
-		}	
+		}
 	}
+
+	/* Description: Manually disconnects a client
+	   Arguments:   client name
+	   Returns:     none
+     */
+	 this.disconnect = function(name)
+	 {
+		for(var i in this.senders)
+		{
+			if(this.senders[i].clientName == name)
+			{
+				this.senders[i].clientSocket.close();
+				return true;
+			}
+		}
+
+		for(var i in this.receivers)
+		{
+			if(this.receivers[i].clientName == name)
+			{
+				this.receivers[i].clientSocket.close();
+				return true;
+			}
+		}
+
+		return false;
+	 }
 }

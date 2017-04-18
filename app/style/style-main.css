@@ -1,35 +1,193 @@
-
-
-body
+table
 {
-	font-family: courier new, monospace;
+	font-family: "Trebuchet MS";
+	color: #FFF6CF;
 }
 
-div
+.pane
 {
+	font-family: "Trebuchet MS";
+	color: #FFF6CF;
+	border-radius: 10px;
+	background-color: #FF766D;
+	padding: 2rem;
+	margin: 1rem;
 }
 
-.row
+.img-pane
 {
-	
+	color: #FFF6CF;
+	border-radius: 10px;
+	background-color: #FF766D;
+	padding: 2rem;
+	margin: 1rem;
 }
 
-.header
+.info-pane
+{
+	font-fanily: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	border-style: solid;
+	border-radius: 10px;
+	border-color: #FF766D;
+	padding: 2rem;
+	margin: 1rem;
+	color: #993E2C;
+
+}
+
+.info-pane p
+{
+	font-size: 2rem;
+}
+
+.info-pane h2
+{
+	color: #993E2C;
+}
+
+p
+{
+	font-size: 1.5rem;
+}
+
+.cell
+{
+	padding: 0.5rem;
+}
+
+.page
+{
+	background-color: #FFF6CF;
+
+}
+
+.outer-pane
+{
+	border-style: solid;
+	border-color: #78C0CC;
+	border-radius: 10px;
+	border-width: 0.5rem;
+	margin:1rem;
+}
+
+.border-container
+{
+	margin: 1rem;
+	border-radius: 10px;
+	border-color: #FF766D;
+	border-style: solid;
+}
+
+.main-menu
+{
+	margin: 0;
+	padding: 0;
+	background-color: #FF766D;
+	border-bottom-style: solid;
+	border-width: 1rem;
+	border-color: #78C0CC;
+}
+
+.menu-item
+{
+	font-family: "Trebuchet MS";
+	font-style: italic;
+	font-size: 2rem;
+	text-align: center;
+	margin: 0.5rem;
+	padding: 0.5rem;
+	/*width:50%;*/
+}
+
+.menu-item-app
+{
+	font-family: "Trebuchet MS";
+	font-style: bold;
+	font-size: 2rem;
+	text-align: center;
+	margin: 0.5rem;
+	padding: 0.5rem;
+}
+
+.fade-background
+{
+	background-color: rgba(50, 50, 50, 0.3);
+	position:fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 50;
+}
+
+.choose-connection-list
+{
+	position: fixed;
+	left: 25%;
+	top: 25%;
+	border-radius: 10px;
+
+	background-color: #FF766D;
+	padding: 2rem;
+	margin: 1rem;
+	z-index: 100;
+}
+
+ul
 {
 	padding: 1rem;
+	margin: 0;
 }
 
-.main-page
+li
 {
-	padding: 1rem;
+	list-style-type: none;
+	font-family: "Trebuchet MS";
+	font-style: italic;
+	font-size: 2rem;
+	text-align: center;
+
+	margin: 1rem;
+	padding: 0;
+
 }
 
-.sidebar
+.tests-item
 {
-	
+	font-family: "Trebuchet MS";
+	font-size: 2rem;
 }
 
-.main-panel
+.button
 {
-	
+		border-radius: 5px;
+	width: 100%;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+	background-color: #FFF6CF;
+		border: none;
+		color: #7F5F5D;
+		padding: 15px 32px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+	margin: 0.5rem;
+}
+
+.button:hover
+{
+    background-color: #911E3E;
+    color: white;
+
+}
+
+.home-info
+{
+	color: #911E3E;
+}
+
+.devices-item
+{
+	font-size: 3rem;
 }

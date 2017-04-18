@@ -4,7 +4,8 @@
  */
  
  /* We're using jQuery. Wait until document has loaded. */
-$(document).ready(function(){
+$(document).ready(function()
+{
 	
 	/* Our server */
 	//var url = 'ws://connectivity-92668.onmodulus.net/';
@@ -19,15 +20,19 @@ $(document).ready(function(){
 		messageContent  : 
 		{
 			device      : "nodeMCU",
-			name        : "button1",
+			name        : "textS",
 			mode        : "send",
-			dataType    : "pulse"
+			dataType    : "text"
 		}
 	};
+	
+	/* A var to store the user's message */
+	var tMessage = "";
 		
 	
 	/* When connection is established */
-	ws.onopen = function(){
+	ws.onopen = function()
+	{
 	
 		console.log('Connected to ' + url);
 		/* Convert client config details to JSON and then
@@ -43,21 +48,39 @@ $(document).ready(function(){
 		console.log(data);
 	};
 	
-	/* When the button is pressed, change the image */
-	
-	$("#button-img").mousedown(function(){
-		
-		$(this).attr("src", "images/button-closed.jpg");
+	$("#forward").click(function()
+	{
+		console.log("Sending message");
+		tMessage = "p30,0";
+		console.log(tMessage);
+		ws.send(tMessage);
 		
 	});
 	
-	/* When it is released change it back, and also
-		send a message to the server */
+	$("#back").click(function()
+	{
+		console.log("Sending message");
+		tMessage = "p30,180";
+		console.log(tMessage);
+		ws.send(tMessage);
 		
-	$("#button-img").mouseup(function(){
+	});
 	
-		$(this).attr("src", "images/button-open.jpg");
-		ws.send("pulse");
+	$("#left").click(function()
+	{
+		console.log("Sending message");
+		tMessage = "p30,270";
+		console.log(tMessage);
+		ws.send(tMessage);
+		
+	});
+	
+	$("#right").click(function()
+	{
+		console.log("Sending message");
+		tMessage = "p30,90";
+		console.log(tMessage);
+		ws.send(tMessage);
 		
 	});
 	

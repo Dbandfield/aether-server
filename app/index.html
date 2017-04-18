@@ -1,76 +1,162 @@
-<html> 
+<!--- Home Page --->
+<html>
 	<head>
+		<link rel="icon" type="image/png" sizes="64x64" href="app/favicon.png">
 
-		<link rel="stylesheet" href="/style/style-main.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="../style/style-main.css">
 		<title> Aether </title>
-		
+
 	</head>
 
 	<body>
-		<div class="header">
-			<div class="row">
-				<div class="col-md-12">
-					<h1>Aether</h1>
-				</div>
-				<div class="col-md-6">
-					<a href="/mcusim-button/index.html"> Button Sim </a> 
-				</div>
-				<div class="col-md-6">
-					<a href="/mcusim-led/index.html"> LED sim </a>
+		<div class = "page">
+			<div class="main-menu">
+				<div class="row">
+					<div class = "col-md-2">
+						<div class = "menu-item">
+							<a href="../index.html" class="button"> Home </a>
+						</div>
+					</div>
+					<div class = "col-md-2">
+						<div class = "menu-item">
+							<a href= "http://connectivity.art.blog" target="_blank" class="button"> Blog </a>
+						</div>
+					</div>
+					<div class = "col-md-2">
+						<div class = "menu-item">
+							<a href= "../contact/index.html" class="button"> Contact </a>
+						</div>
+					</div>
+					<div class = "col-md-6">
+						<div class = "menu-item">
+							<a href= "../aether-web-app/index.html" class="button"> App </a>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-		
-		<div class="main-page">
-			<div class="row">
-				<div class="col-md-4 sidebar">
-					<h2 class="sidebar-title"> List of Connections </h2>
-					<br>
-					<div class="sender-list">
-						<h3 class="sidebar-title"> Senders </h3>
-						<br>
-						<div class="connection-list">
+			<div class = "row">
+
+					<div class ="col-md-12">
+						<div class = "header">
+							<div class = "row">
+								<div class="col-md-6">
+									<div class ="pane">
+										<div class="row">
+											<div class="col-md-3">
+												<img style="width:100%;margin:auto;" src="..\images\icon.svg"></img>
+											</div>
+											<div class="col-md-3">
+											</div>
+											<div class="col-md-3">
+
+												<h1> <i>Aether</i> </h1>
+											</div>
+										</div>
+
+
+
+									</div>
+
+								</div>
+								<div class="col-md-6">
+								<div class="outer-pane">
+									<div class="info-pane">
+										<p> Aether is a platform for assisting the creation of art work
+											using the "Internet of Things"</p>
+									</div>
+								</div>
+							</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="outer-pane">
+
+									<div class="info-pane">
+										<h2>
+											What is the Internet of Things?
+										</h2>
+										<p>
+											The internet is a powerful tool for fast, long distance communication. With the ever
+											increasing power of embedded electronics, the internet is no longer just being used
+											by laptops and desktop computers. Increasingly, more and more electronic devices are
+											being equipped with the ability to send information over the internet.
+											<br> <br>
+											This phenomenon has been dubbed "The Internet of Things". It is a major force within
+											our society now that brings both
+											<a href="https://arstechnica.co.uk/search/?ie=UTF-8&q=internet+of+things">
+												benefits and concerns.
+											</a>
+										</p>
+									</div>
+								</div>
+								</div>
+								<div class="col-md-6">
+									<div class="img-pane">
+										<img style="height:55%"src="../images/fridge-1-a.svg"></img>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="img-pane">
+										<img style="width:100%"src="../images/connections.svg"></img>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="outer-pane">
+									<div class="info-pane">
+										<h2>
+											What is Aether?
+										</h2>
+										<p>
+											Aether is an Internet of Things(IOT) web platform that enables virtual
+											collaboration through data sharing.
+											<br>
+											It allows users to connect by sending data between artworks
+											and objects in real time.
+											<br>
+											We want to create opportunities for virtual and cross-disciplinary collaboration.
+											We want to investigate the physicality of the Internet of Things, and we want to
+											question the role of technology and information transfer in contemporary art practice.
+										</p>
+									</div>
+								</div>
+									<div class="outer-pane">
+									<div class="info-pane">
+										<h2>
+											How does it work?
+										</h2>
+										<p>
+											We are developing Aether to be flexible and user-friendly.
+											Artworks and objects with an internet connection can be
+											connected to the platform to send or receive data.
+											Each artwork connected to Aether will need a microcontroller with an internet connection.
+											Adding a few lines of code from our library will allow the
+											microcontroller to connect to our server.
+											From the Aether platform you will be able to see a list of
+											connected artworks and choose which artwork you’d like to connect to.
+											Connected artworks are separated into senders and receivers.
+											Senders gather data and send it to the platform.
+											Receivers access the data from a Sender. Simple.
+											Each member will be free to interpret the data in
+											whatever way they want and their artwork can take any form.
+											We will also be running an entry-level workshop programme to support the Aether platform.
+										</p>
+									</div>
+								</div>
+							</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+
+								</div>
+							</div>
 						</div>
-				
-					</div>
-					<div class="receiver-list">
-						<h3 class="sidebar-title"> Receivers </h3>
-						<br>
-						<div class="connection-list">
-						</div>
+
 					</div>
 				</div>
-				
-				<div class="col-md-7 main-panel">
-					<div class="row connection-details">
-						<div class="col-md-12 connection-details-title"> 
-							<h2>Connection Details</h2>
-						</div>
-						<div class="col-md-6 connection-details-info">
-							<h4> Select a connection from the list on the left
-							     to see it's details </h4>
-						</div>
-						<div class="col-md-6 connection-details-selection">
-						</div>
-						
-					</div>
-				</div>		
-			</div>
-		</div>
-		
-
-
+			</div> 
 	</body>
 
-	<script
-	  src="https://code.jquery.com/jquery-3.1.1.min.js"
-	  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-	  crossorigin="anonymous"></script>
-	<script src="scripts/message-handler.js"></script>
-	<script src="scripts/html-updater.js"></script>
-	<script src="scripts/main.js"></script>
-	
 </html>
-
-
