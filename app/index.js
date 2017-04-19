@@ -2,17 +2,6 @@
  * It takes connections from clients and lets you
  * set them up as data senders or receivers */
 
-/* --- COMPILATION --- */
-
-/* First we compile the client side scripts into "bundle.js"
- * We are using Browserify to bundle the files, and
- * Babel to compile the React/JSX code
- */
-
-
-
-  /* --- END COMPILATION --- */
-
 /* Server Setup
  * We're using express to create the server,
  * http to serve webpages, and ws to handle
@@ -48,6 +37,38 @@ app.get("/*", function (req, res)
 		}
 	});
 
+});
+
+app.post('/contact', function (req, res)
+{
+  var mailOpts, smtpTrans;
+  //Setup Nodemailer transport, I chose gmail. Create an application-specific password to avoid problems.
+  smtpTrans = nodemailer.createTransport('SMTP',
+  {
+      service: 'Gmail',
+      auth:
+      {
+          user: "iot.aether@gmail.com",
+          pass: "originalaether70"
+      }
+  });
+  //Mail options
+  mailOpts = {
+      from: req.body.name + ' &lt;' + req.body.email + '&gt;', //grab form data from the request body object
+      to: 'iot.aether@gmail.com',
+      subject: 'Website contact form',
+      text: req.body.message
+  };
+  smtpTrans.sendMail(mailOpts, function (error, response) {
+      //Email not sent
+      if (error) {
+          res.render('contact', { title: 'Contact', msg: 'Error occured, message not sent.', err: true, page: 'contact' })
+      }
+      //Yay!! Email sent
+      else {
+          res.render('contact', { title: 'Contact', msg: 'Message sent! Thank you.', err: false, page: 'contact' })
+      }
+  });
 });
 
 /* On client connection */

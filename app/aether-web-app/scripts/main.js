@@ -245,11 +245,11 @@ class App extends React.Component // Acces React by inheritance
 							<MainMenu />
 
 					<div className="row">
-						<div className ="col-md-12">
+						<div className ="col-xs-12">
 							<div className = "panel-main">
 								<div className = "header">
 									<div className = "row">
-										<div className="col-md-12">
+										<div className="col-xs-12">
 
 											<div className ="pane">
 												<h1> The Aether Web App </h1>
@@ -259,7 +259,7 @@ class App extends React.Component // Acces React by inheritance
 									</div>
 
 											<div className ="row">
-												<div className="col-md-9">
+												<div className="col-xs-9">
 
 														<div className="pane">
 															<p>
@@ -285,7 +285,7 @@ class App extends React.Component // Acces React by inheritance
 															</div>
 													</div>
 												</div>
-												<div className="col-md-3">
+												<div className="col-xs-3">
 													<Tests/>
 												</div>
 											</div>
@@ -319,7 +319,7 @@ function MainMenu(props)
    It takes a hyper link and displayed text as properties */
 function MenuItem(props)
 {
-	return	<div className="col-md-2">
+	return	<div className="col-md-2 col-xs-4">
 			<div className = "menu-item">
 				<a href={props.link} target={props.newPage} className="button"> {props.text} </a>
 			</div>
@@ -331,7 +331,7 @@ function MenuItem(props)
    It takes a hyper link and displayed text as properties */
 function MenuAppItem(props)
 {
-	return	<div className="col-md-6">
+	return	<div className="col-xs-12 col-md-6">
 			<div className = "menu-item-app">
 				<a href={props.link} target={props.newPage} className="button"> {props.text} </a>
 			</div>
@@ -343,7 +343,7 @@ function MenuAppItem(props)
  	a list of sender objects and receiver objects */
 function MainDeviceList(props)
 {
-	return 	<div className = "col-md-3">
+	return 	<div className = "col-xs-3">
 				<div className="pane">
 
 							<h2>DEVICES</h2>
@@ -425,19 +425,19 @@ function Details(props)
 	{
 		det = <div className = "row">
 
-			<div className = "col-md-6">
+			<div className = "col-xs-6">
 				<Information 	selectedDevice 	 = {props.selectedDevice}
 								devices = {props.chooseConnDevices}
 								onChooseConnection = {props.onChooseConnection}
 								onClickChooseConnection = {props.onClickChooseConnection}
 								showChooseConnection = {props.showChooseConnection}/>
 			</div>
-			<div className = "col-md-6">
+			<div className = "col-xs-6">
 				<Connections connectionList = {props.selectedDevice.connections}/>
 			</div>
 		</div>
 	}
-	return 	<div className = "col-md-9">
+	return 	<div className = "col-xs-9">
 				<div className ="pane">
 						<h2> DEVICE DETAILS </h2>
 						{det}
@@ -605,7 +605,7 @@ function Header(props)
 {
 	return 	<div className = "header">
 		<div className = "row">
-			<div className="col-md-12">
+			<div className="col-xs-12">
 			<div className ="shell">
 				<div className ="title">
 					The Aether Web App
@@ -615,7 +615,7 @@ function Header(props)
 		</div>
 
 				<div className ="row">
-					<div className="col-md-8">
+					<div className="col-xs-8">
 						<div className="shell">
 							<div className="description">
 								Below is a list of devices currently connected to Aether
@@ -624,7 +624,7 @@ function Header(props)
 							</div>
 						</div>
 					</div>
-					<div className="col-md-4">
+					<div className="col-xs-4">
 						<Tests/>
 					</div>
 				</div>
