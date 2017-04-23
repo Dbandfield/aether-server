@@ -121,5 +121,5 @@ function main()
 {
     setTimeout(() => {
         aCH.pingClients();
-    }), 20000);
+    }, 20000);
 }
