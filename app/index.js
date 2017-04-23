@@ -119,7 +119,7 @@ main();
 
 function main()
 {
-    setTimeout(() => {
+    setInterval(() => {
         aCH.pingClients();
     }, 20000);
 }
