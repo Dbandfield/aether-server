@@ -606,7 +606,7 @@ module.exports = exports = function AetherConnections()
 		Arguments:   none
 		Returns:     none
 	   */
-	pingClients()
+	this.pingClients = function()
 	{
 		msg = "_ping";
 		for(i of this.receivers)
