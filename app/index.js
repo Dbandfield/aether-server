@@ -93,10 +93,12 @@ server.listen(port, function () { console.log('Listening on ' + port) });
 var os = require('os');
 var ifaces = os.networkInterfaces();
 
-Object.keys(ifaces).forEach(function (ifname) {
+Object.keys(ifaces).forEach(function (ifname)
+{
   var alias = 0;
 
-  ifaces[ifname].forEach(function (iface) {
+  ifaces[ifname].forEach(function (iface)
+  {
     if ('IPv4' !== iface.family || iface.internal !== false) {
       // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
       return;
@@ -112,3 +114,12 @@ Object.keys(ifaces).forEach(function (ifname) {
     ++alias;
   });
 });
+
+main();
+
+function main()
+{
+    setTimeout(() => {
+        aCH.pingClients();
+    }), 20000);
+}

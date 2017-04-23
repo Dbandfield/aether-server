@@ -223,20 +223,24 @@ module.exports = exports = function AetherConnections()
 							 */
 							function senderFunction(data, flags)
 							{
-								/* Look for this socket in senders */
-								for(var c in myself.senders)
+								if(data[0] != "_") // ignore reserved messages
 								{
-									if(myself.senders[c].clientSocket == socket)
+									/* Look for this socket in senders */
+									for(var c in myself.senders)
 									{
-										for(var r in myself.senders[c].clientConnections)
+										if(myself.senders[c].clientSocket == socket)
 										{
-											myself.senders[c]
-												  .clientConnections[r]
-												  .socket.send(data);
-										}
+											for(var r in myself.senders[c].clientConnections)
+											{
+												myself.senders[c]
+													  .clientConnections[r]
+													  .socket.send(data);
+											}
 
+										}
 									}
 								}
+
 							}
 							socket.removeAllListeners();
 							socket.on('message', senderFunction);
@@ -597,4 +601,27 @@ module.exports = exports = function AetherConnections()
 
 		return false;
 	 }
+
+	 /* Description: Ping clients to check if they're about
+		Arguments:   none
+		Returns:     none
+	   */
+	pingClients()
+	{
+		msg = "_ping";
+		for(i of this.receivers)
+		{
+			i.clientSocket.send(msg);
+		}
+
+		for(i of this.senders)
+		{
+			i.clientSocket.send(msg);
+		}
+
+		for(i of this.controllers)
+		{
+			i.clientSocket.send(msg);
+		}
+	}
 }
