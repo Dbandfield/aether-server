@@ -26,40 +26,44 @@ module.exports = exports = function AetherConnections()
      */
 	this.processMessage = function(msg, socket)
 	{
-		/* try parsing the message */
-		var parsedMessage = this.parseMessage(msg);
-
-		/* Parsed correctly? */
-		if(parsedMessage)
+		if(msg != "_ping")
 		{
-			/* If it is a configuration message */
-			if(parsedMessage.messageType == "config")
+			/* try parsing the message */
+			var parsedMessage = this.parseMessage(msg);
+
+			/* Parsed correctly? */
+			if(parsedMessage)
 			{
-				this.configureClient(parsedMessage, socket);
-				this.updateControllers();
-			}
-			/* if it is a new connection between a sender and a receiver */
-			else if(parsedMessage.messageType == "new connection")
-			{
-				this.updateConnections(parsedMessage.messageContent.receiver,
-									   parsedMessage.messageContent.sender,
-								   	   parsedMessage.messageContent.remove);
-				this.updateControllers();
-			}
-			else if(parsedMessage.messageType == "disconnection")
-			{
-				this.disconnect(parsedMessage.messageContent.name);
+				/* If it is a configuration message */
+				if(parsedMessage.messageType == "config")
+				{
+					this.configureClient(parsedMessage, socket);
+					this.updateControllers();
+				}
+				/* if it is a new connection between a sender and a receiver */
+				else if(parsedMessage.messageType == "new connection")
+				{
+					this.updateConnections(parsedMessage.messageContent.receiver,
+										   parsedMessage.messageContent.sender,
+										   parsedMessage.messageContent.remove);
+					this.updateControllers();
+				}
+				else if(parsedMessage.messageType == "disconnection")
+				{
+					this.disconnect(parsedMessage.messageContent.name);
+				}
+				else
+				{
+					/* Unrecognised message type */
+					console.error("[ACH] Unrecognised message format");
+				}
 			}
 			else
 			{
-				/* Unrecognised message type */
-				console.error("[ACH] Unrecognised message format");
+				console.error("[ACH] Message not parsed");
 			}
 		}
-		else
-		{
-			console.error("[ACH] Message not parsed");
-		}
+
 	}
 	/* Description: When the connection is closed, update everything.
 	   Arguments:   The socket that was closed
