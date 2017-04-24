@@ -127,14 +127,14 @@ class App extends React.Component // Acces React by inheritance
 	{
 		console.log(data.data);
 		console.log(data);
-		/*console.log("1");
-		if(data.data[0] == '_')
+		console.log("1");
+		if(data.data == '_ping')
 		{
 			console.log("ping");
 			myself.ws.send("_ping");
 		}
 		else
-		{*/
+		{
 			console.log("2");
 			/* Process the message */
 			if(this.messageHandler.processMessage(data.data))
@@ -179,7 +179,7 @@ class App extends React.Component // Acces React by inheritance
 			{
 				console.error("There was an error processing the message");
 			}
-		//}
+		}
 
 	}
 
