@@ -223,7 +223,7 @@ module.exports = exports = function AetherConnections()
 							 */
 							function senderFunction(data, flags)
 							{
-								if(data[0] != "_") // ignore reserved messages
+								if(data != "_ping") // ignore reserved messages
 								{
 									/* Look for this socket in senders */
 									for(var c in myself.senders)
