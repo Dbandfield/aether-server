@@ -127,6 +127,7 @@ class App extends React.Component // Acces React by inheritance
 	{
 		if(data.data[0] == '_')
 		{
+			console.log("ping");
 			myself.ws.send("_ping");
 		}
 		else
@@ -173,7 +174,7 @@ class App extends React.Component // Acces React by inheritance
 			else
 			{
 				console.error("There was an error processing the message");
-			}	
+			}
 		}
 
 	}
