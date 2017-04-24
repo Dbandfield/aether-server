@@ -131,7 +131,7 @@ class App extends React.Component // Acces React by inheritance
 		if(data.data == '_ping')
 		{
 			console.log("ping");
-			myself.ws.send("_ping");
+			self.ws.send("_ping");
 		}
 		else
 		{
