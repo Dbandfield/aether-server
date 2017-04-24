@@ -10,6 +10,8 @@ $(document).ready(function(){
 	//var url = 'ws://connectivity-92668.onmodulus.net/';
 	//var localUrl = 'ws://localhost:3000';
 	/* Create a websocket */
+	var url = 'wss://aether-iot.herokuapp.com/';
+	
 	var ws = new WebSocket(url);
 	/* Create an object to store client details */
 	var clientConfig =
