@@ -125,6 +125,7 @@ class App extends React.Component // Acces React by inheritance
 	   update the React HTML, by setting the state */
 	handleWebSocketData(data, mask)
 	{
+		console.log("1");
 		if(data.data[0] == '_')
 		{
 			console.log("ping");
@@ -132,6 +133,7 @@ class App extends React.Component // Acces React by inheritance
 		}
 		else
 		{
+			console.log("2");
 			/* Process the message */
 			if(this.messageHandler.processMessage(data.data))
 			{
