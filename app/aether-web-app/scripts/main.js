@@ -125,6 +125,8 @@ class App extends React.Component // Acces React by inheritance
 	   update the React HTML, by setting the state */
 	handleWebSocketData(data, mask)
 	{
+		console.log(data.data);
+		console.log(data);
 		/*console.log("1");
 		if(data.data[0] == '_')
 		{
