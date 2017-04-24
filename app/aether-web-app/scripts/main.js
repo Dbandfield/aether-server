@@ -125,49 +125,57 @@ class App extends React.Component // Acces React by inheritance
 	   update the React HTML, by setting the state */
 	handleWebSocketData(data, mask)
 	{
-		/* Process the message */
-		if(this.messageHandler.processMessage(data.data))
+		if(data.data[0] == '_')
 		{
-			/* Get lists of senders and receivers */
-			this.setState({	senders: 	this.messageHandler.getSenders(),
-							receivers: 	this.messageHandler.getReceivers()});
-
-			var name = this.state.selectedDevice.name;
-			var tmp = this.state.senders.find(obj => obj.name == name);
-
-			if(tmp != undefined)
+			myself.ws.send("_ping");
+		}
+		else
+		{
+			/* Process the message */
+			if(this.messageHandler.processMessage(data.data))
 			{
-				this.setState({selectedDevice : tmp,
-								chooseConnectionList : this.state.receivers});
-			}
-			else
-			{
-				tmp = this.state.receivers.find(obj => obj.name == name);
+				/* Get lists of senders and receivers */
+				this.setState({	senders: 	this.messageHandler.getSenders(),
+								receivers: 	this.messageHandler.getReceivers()});
+
+				var name = this.state.selectedDevice.name;
+				var tmp = this.state.senders.find(obj => obj.name == name);
 
 				if(tmp != undefined)
 				{
 					this.setState({selectedDevice : tmp,
-									chooseConnectionList : this.state.senders});
+									chooseConnectionList : this.state.receivers});
 				}
 				else
 				{
-					this.setState(	{
-										selectedDevice :
-										{
-											name: "",
-											mode: "",
-											dataType: "",
-											connections: []} // Selected Device
-									})
+					tmp = this.state.receivers.find(obj => obj.name == name);
+
+					if(tmp != undefined)
+					{
+						this.setState({selectedDevice : tmp,
+										chooseConnectionList : this.state.senders});
+					}
+					else
+					{
+						this.setState(	{
+											selectedDevice :
+											{
+												name: "",
+												mode: "",
+												dataType: "",
+												connections: []} // Selected Device
+										})
+					}
 				}
+
+
 			}
-
-
+			else
+			{
+				console.error("There was an error processing the message");
+			}	
 		}
-		else
-		{
-			console.error("There was an error processing the message");
-		}
+
 	}
 
 	/* This function executes when the user clicks a device. We need to show
