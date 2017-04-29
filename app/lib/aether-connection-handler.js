@@ -313,7 +313,17 @@ module.exports = exports = function AetherConnections()
 							 */
 							 function receiverFunction(data, flags)
  							{
-								if()
+								console.log("looking in senders");
+								if(c.clientSocket == socket)
+								{
+									var substr = data.substring(0, 6);
+									console.log("Substr: " + substr);
+									if(substr == "_ping")
+									{
+										var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
+										myself.pingedConnections.splice(ndx, 1);
+									}
+								}
  							}
 							 socket.removeAllListeners();
 							socket.on('message', receiverFunction);
