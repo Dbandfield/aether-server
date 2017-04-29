@@ -35,7 +35,7 @@ module.exports = exports = function AetherConnections()
 		if(substr == "_ping")
 		{
 			console.log("Received Ping");
-			var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
+			var ndx = myself.pingedConnections.findIndex(o => o[0] == msg);
 			myself.pingedConnections.splice(ndx, 1);
 		}
 		else
