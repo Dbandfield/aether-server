@@ -41,7 +41,7 @@ $(document).ready(function(){
 	ws.onmessage = function(data, mask)
 	{
 		var substr = data.data.substring(0, 5);
-        if(substring == "_ping")
+        if(substr == "_ping")
         {
 			console.log("Received Ping");
             ws.send(data.data);

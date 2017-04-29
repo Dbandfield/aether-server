@@ -46,7 +46,7 @@ $(document).ready(function(){
 		var substr = data.data.substring(0, 5);
 
 
-        if(data.data == "_ping")
+        if(substr == "_ping")
         {
 			console.log("Received Ping");
             ws.send(data.data);
