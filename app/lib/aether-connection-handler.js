@@ -314,15 +314,19 @@ module.exports = exports = function AetherConnections()
 							 */
 							 function receiverFunction(data, flags)
  							{
-								console.log("looking in senders");
-								if(c.clientSocket == socket)
+								for(var c of myself.receivers)
 								{
-									var substr = data.substring(0, 5);
-									console.log("Substr: " + substr);
-									if(substr == "_ping")
+									console.log("looking in receivers");
+									if(c.clientSocket == socket)
 									{
-										var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
-										myself.pingedConnections.splice(ndx, 1);
+										var substr = data.substring(0, 5);
+										console.log("Substr: " + substr);
+										if(substr == "_ping")
+										{
+											var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
+											console.log(ndx);
+											myself.pingedConnections.splice(ndx, 1);
+										}
 									}
 								}
  							}
