@@ -650,11 +650,21 @@ module.exports = exports = function AetherConnections()
 		/* First remove pinged connections that have not responded. When they
 		   respond they are removed from the array, so we simply remove everything
 		   that is still in there */
+		var obj;
 		for(i of this.pingedConnections)
 		{
+			obj = this.senders.find(o => o.clientName == i);
+			if(obj == undefined)
+			{
+				obj = this.receivers.find(o => o.clientName == i);
+				if(obj == undefined)
+				{
+					obj = this.controllers.find(o => o.clientName == i);
+				}
+			}
 			console.log("Closing ");
 			console.log(i);
-			this.closeConnection(i);
+			this.closeConnection(obj.clientSocket);
 		}
 
 
