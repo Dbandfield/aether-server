@@ -47,7 +47,7 @@ module.exports = exports = function AetherConnections()
 				}
 			}
 
-			var indexToRemove = this.pingedConnections.findIndex(c => c == obj.name);
+			var indexToRemove = this.pingedConnections.findIndex(c => c == obj.clientName);
 			console.log("pingedConnections index: ");
 			console.log(indexToRemove);
 			this.pingedConnections.splice(indexToRemove, 1);
