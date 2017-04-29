@@ -682,6 +682,8 @@ module.exports = exports = function AetherConnections()
 
 	this.handlePing = function(name)
 	{
+		console.log("Handling Ping");
+		console.log(name);
 		var i = this.pingedConnections.findIndex(o => o == name);
 		this.pingedConnections.splice(i, 1);
 	}
