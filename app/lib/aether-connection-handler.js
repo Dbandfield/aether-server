@@ -37,13 +37,13 @@ module.exports = exports = function AetherConnections()
 		{
 			console.log("Received Ping");
 			/* Now remove from the ping list, because it has responded */
-			var obj = senders.find(o => o.clientSocket == socket);
+			var obj = this.senders.find(o => o.clientSocket == socket);
 			if(obj == undefined)
 			{
-				obj = receivers.find(o => o.clientSocket == socket);
+				obj = this.receivers.find(o => o.clientSocket == socket);
 				if(obj == undefined)
 				{
-					obj = controllers.find(o => o.clientSocket == socket);
+					obj = this.controllers.find(o => o.clientSocket == socket);
 				}
 			}
 
