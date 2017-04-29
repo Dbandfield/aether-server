@@ -43,7 +43,15 @@ $(document).ready(function(){
 	/* Upon receiving a message */
 	ws.onmessage = function(data, mask)
 	{
-		if(data.data == "pulse")
+		var substr = data.data.substring(0, 5);
+
+
+        if(data.data == "_ping")
+        {
+			console.log("Received Ping");
+            ws.send(data.data);
+        }
+		else if(data.data == "pulse")
 		{
 			/* Turn led to alternate state */
 			ledOn = !ledOn;
@@ -60,11 +68,6 @@ $(document).ready(function(){
 								   "images/led-off.jpg");
 			}
 		}
-        else if(data.data == "_ping")
-        {
-			console.log("Received Ping");
-            ws.send("_ping");
-        }
 
 	};
 

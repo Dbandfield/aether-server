@@ -40,10 +40,11 @@ $(document).ready(function(){
 
 	ws.onmessage = function(data, mask)
 	{
-        if(data.data == "_ping")
+		var substr = data.data.substring(0, 5);
+        if(substring == "_ping")
         {
 			console.log("Received Ping");
-            ws.send("_ping");
+            ws.send(data.data);
         }
 	};
 
