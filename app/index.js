@@ -83,7 +83,7 @@ wss.on('connection', function connection(ws)
 
 	ws.on('close', function(req, res)
 	{
-		aCH.closeConnection(ws);
+		aCH.closeConnectionBySocket(ws);
 	});
 });
 
