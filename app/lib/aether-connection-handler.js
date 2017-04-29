@@ -253,21 +253,27 @@ module.exports = exports = function AetherConnections()
 							 */
 							function senderFunction(data, flags)
 							{
+								console.log("Sender function");
 								/* Look for this socket in senders */
 								for(var c of myself.senders)
 								{
+									console.log("looking in senders");
 									if(c.clientSocket == socket)
 									{
+										console.log("Is ping?");
 										/* check if ping */
 										if(data == "_ping")
 										{
+											console.log("It is");
 											myself.handlePing(c.clientName);
 										}
 										else
 										{
+											console.log("It is not");
 											/* otherwise send data onto recievers */
 											for(var r of c.clientConnections)
 											{
+												console.log("Send data to receivers");
 												r.socket.send(data);
 											}
 										}
@@ -674,6 +680,8 @@ module.exports = exports = function AetherConnections()
 			}
 			console.log("Closing ");
 			console.log(i);
+			var inToRemove = this.pingedConnections.indexOf(i);
+			this.pingedConnections.splice(inToRemove, 1);
 			this.closeConnection(obj.clientSocket);
 		}
 
