@@ -16,6 +16,12 @@ module.exports = exports = function AetherConnections()
 	/* Valid Data Types */
 	this.validDataTypes = ["pulse", "text", "number", "boolean"]
 
+	/* Ping data. */
+	/* Populated when a ping is sent. Depopuated when it receives
+	 	a response. Anything in the array has not responded, and so after a
+		set amount of time can be removed from the system. */
+	this.pingedConnections = [];
+
 	/*----- OBJECT METHODS -----*/
 
 	/*----- Public -----*/
@@ -26,9 +32,16 @@ module.exports = exports = function AetherConnections()
      */
 	this.processMessage = function(msg, socket)
 	{
+		console.log(msg);
 		if(msg == "_ping")
 		{
-			console.log("Received Ping");
+			console.log("Received Ping from: ");
+			console.log(socket);
+			/* Now remove from the ping list, because it has responded */
+			var indexToRemove = this.pingedConnections.findIndex(s => s == socket);
+			console.log("pingedConnections index: ");
+			console.log(indexToRemove);
+			this.pingedConnections.splice(indexToRemove, 1);
 		}
 		else
 		{
@@ -616,20 +629,36 @@ module.exports = exports = function AetherConnections()
 	   */
 	this.pingClients = function()
 	{
-		msg = "_ping";
+		/* First remove pinged connections that have not responded. When they
+		   respond they are removed from the array, so we simply remove everything
+		   that is still in there */
+		for(i of this.pingedConnections)
+		{
+			console.log("Closing ");
+			console.log(i);
+			i.close();
+		}
+
+
+		var msg = "_ping";
 		for(i of this.receivers)
 		{
 			i.clientSocket.send(msg);
+			pingedConnections.push(i.clientSocket);
 		}
 
 		for(i of this.senders)
 		{
 			i.clientSocket.send(msg);
+			pingedConnections.push(i.clientSocket);
+
 		}
 
 		for(i of this.controllers)
 		{
 			i.clientSocket.send(msg);
+			pingedConnections.push(i.clientSocket);
+
 		}
 	}
 }
