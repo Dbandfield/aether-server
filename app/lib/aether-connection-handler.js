@@ -654,7 +654,7 @@ module.exports = exports = function AetherConnections()
 		{
 			console.log("Closing ");
 			console.log(i);
-			this.disconnect(i);
+			this.closeConnection(i);
 		}
 
 
