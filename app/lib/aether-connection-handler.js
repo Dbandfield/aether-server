@@ -35,9 +35,19 @@ module.exports = exports = function AetherConnections()
 		console.log(msg);
 		if(msg == "_ping")
 		{
-			console.log("Received Ping from: ");
+			console.log("Received Ping");
 			/* Now remove from the ping list, because it has responded */
-			var indexToRemove = this.pingedConnections.findIndex(s => s == socket);
+			var obj = senders.find(o => o.clientSocket == socket);
+			if(obj == undefined)
+			{
+				obj = receivers.find(o => o.clientSocket == socket);
+				if(obj == undefined)
+				{
+					obj = controllers.find(o => o.clientSocket == socket);
+				}
+			}
+
+			var indexToRemove = this.pingedConnections.findIndex(c => c == obj.name);
 			console.log("pingedConnections index: ");
 			console.log(indexToRemove);
 			this.pingedConnections.splice(indexToRemove, 1);
