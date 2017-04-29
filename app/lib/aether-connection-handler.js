@@ -260,8 +260,16 @@ module.exports = exports = function AetherConnections()
 											/* otherwise send data onto recievers */
 											for(var r of c.clientConnections)
 											{
-												console.log("Send data to receivers");
-												r.socket.send(data);
+												if(r.socket.readyState == 1) //open
+												{
+													console.log("Send data to receivers");
+													r.socket.send(data);
+												}
+												else
+												{
+													console.log("Not open");
+												}
+
 											}
 										}
 									}
