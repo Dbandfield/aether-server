@@ -11,7 +11,7 @@ $(document).ready(function(){
 	//var localUrl = 'ws://localhost:3000';
 	/* Create a websocket */
 	var url = 'wss://aether-iot.herokuapp.com/';
-	
+
 	var ws = new WebSocket(url);
 	/* Create an object to store client details */
 	var clientConfig =
@@ -40,9 +40,9 @@ $(document).ready(function(){
 
 	ws.onmessage = function(data, mask)
 	{
-		console.log(data);
         if(data.data == "_ping")
         {
+			console.log("Received Ping");
             ws.send("_ping");
         }
 	};

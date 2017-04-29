@@ -43,7 +43,6 @@ $(document).ready(function(){
 	/* Upon receiving a message */
 	ws.onmessage = function(data, mask)
 	{
-		console.log(data.data);
 		if(data.data == "pulse")
 		{
 			/* Turn led to alternate state */
@@ -63,6 +62,7 @@ $(document).ready(function(){
 		}
         else if(data.data == "_ping")
         {
+			console.log("Received Ping");
             ws.send("_ping");
         }
 

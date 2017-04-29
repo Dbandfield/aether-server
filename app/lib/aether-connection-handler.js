@@ -26,7 +26,11 @@ module.exports = exports = function AetherConnections()
      */
 	this.processMessage = function(msg, socket)
 	{
-		if(msg != "_ping")
+		if(msg == "_ping")
+		{
+			console.log("Received Ping");
+		}
+		else
 		{
 			/* try parsing the message */
 			var parsedMessage = this.parseMessage(msg);
