@@ -244,20 +244,23 @@ module.exports = exports = function AetherConnections()
 							 */
 							function senderFunction(data, flags)
 							{
-								if(data != "_ping") // ignore reserved messages
+								/* Look for this socket in senders */
+								for(var c of myself.senders)
 								{
-									/* Look for this socket in senders */
-									for(var c in myself.senders)
+									if(c.clientSocket == socket)
 									{
-										if(myself.senders[c].clientSocket == socket)
+										/* check if ping */
+										if(data == "_ping")
 										{
-											for(var r in myself.senders[c].clientConnections)
+											myself.handlePing(c.clientName);
+										}
+										else
+										{
+											/* otherwise send data onto recievers */
+											for(var r of c.clientConnections)
 											{
-												myself.senders[c]
-													  .clientConnections[r]
-													  .socket.send(data);
+												r.socket.send(data);
 											}
-
 										}
 									}
 								}
@@ -307,8 +310,24 @@ module.exports = exports = function AetherConnections()
 							 * a new onMessage function. (Nothing in it for now, because
 							 * there are no messages we need to process from receivers)
 							 */
+							 function receiverFunction(data, flags)
+ 							{
+								/* Look for this socket in senders */
+								for(var c of myself.receivers)
+								{
+									if(c.clientSocket == socket)
+									{
+										/* check if ping */
+										if(data == "_ping")
+										{
+											myself.handlePing(c.clientName);
+										}
+									}
+								}
+
+ 							}
 							 socket.removeAllListeners();
-							socket.on('message', function(data, flags){});
+							socket.on('message', receiverFunction);
 							socket.on('close', function(){myself.closeConnection(socket)});
 
 							/* Success!*/
@@ -636,7 +655,7 @@ module.exports = exports = function AetherConnections()
 		{
 			console.log("Closing ");
 			console.log(i);
-			i.close();
+			this.disconnect(i);
 		}
 
 
@@ -644,21 +663,27 @@ module.exports = exports = function AetherConnections()
 		for(i of this.receivers)
 		{
 			i.clientSocket.send(msg);
-			this.pingedConnections.push(i.clientSocket);
+			this.pingedConnections.push(i.clientName);
 		}
 
 		for(i of this.senders)
 		{
 			i.clientSocket.send(msg);
-			this.pingedConnections.push(i.clientSocket);
+			this.pingedConnections.push(i.clientName);
 
 		}
 
 		for(i of this.controllers)
 		{
 			i.clientSocket.send(msg);
-			this.pingedConnections.push(i.clientSocket);
+			this.pingedConnections.push(i.clientName);
 
 		}
+	}
+
+	this.handlePing = function(name)
+	{
+		var i = this.pingedConnections.findIndex(o => o == name);
+		this.pingedConnections.splice(i, 1);
 	}
 }
