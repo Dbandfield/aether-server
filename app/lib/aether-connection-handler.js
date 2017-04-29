@@ -669,7 +669,7 @@ module.exports = exports = function AetherConnections()
 			var msg = msgBase + identifier.toString();
 			console.log("msg: " + msg);
 			i.clientSocket.send(msg);
-			this.pingedConnections.push([msg, i.clientName]);
+			this.pingedConnections.push([msg, i.clientSocket]);
 
 			identifier ++;
 		}
