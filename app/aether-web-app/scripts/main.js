@@ -126,16 +126,15 @@ class App extends React.Component // Acces React by inheritance
 	handleWebSocketData(data, mask)
 	{
 		console.log(data.data);
-		console.log(data);
-		console.log("1");
+		var substr = data.data.substring(0, 6);
+		console.log(substr);
 		if(data.data == '_ping')
 		{
-			console.log("ping");
-			self.ws.send("_ping");
+			console.log("ping recv");
+			self.ws.send(data.data);
 		}
 		else
 		{
-			console.log("2");
 			/* Process the message */
 			if(this.messageHandler.processMessage(data.data))
 			{

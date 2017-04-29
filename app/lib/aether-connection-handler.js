@@ -16,6 +16,8 @@ module.exports = exports = function AetherConnections()
 	/* Valid Data Types */
 	this.validDataTypes = ["pulse", "text", "number", "boolean"]
 
+	/* Ping Data */
+	this.pingedConnections = [];
 
 	/*----- OBJECT METHODS -----*/
 
@@ -28,9 +30,13 @@ module.exports = exports = function AetherConnections()
 	this.processMessage = function(msg, socket)
 	{
 		console.log(msg);
-		if(msg == "_ping")
+		var substr = msg.substring(0, 6);
+		console.log("Substr: " + substr);
+		if(substr == "_ping")
 		{
 			console.log("Received Ping");
+			var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
+			myself.pingedConnections.splice(ndx, 1);
 		}
 		else
 		{
@@ -77,6 +83,7 @@ module.exports = exports = function AetherConnections()
      */
 	this.closeConnection = function(socket)
 	{
+		console.log("Closing connection");
 		/* Search senders */
 		var indexToRemove1 = this.senders.findIndex(obj => obj.clientSocket == socket);
 
@@ -240,12 +247,22 @@ module.exports = exports = function AetherConnections()
 									console.log("looking in senders");
 									if(c.clientSocket == socket)
 									{
+										var substr = data.substring(0, 6);
+										console.log("Substr: " + substr);
+										if(substr == "_ping")
+										{
+											var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
+											myself.pingedConnections.splice(ndx, 1);
+										}
+										else
+										{
 											/* otherwise send data onto recievers */
 											for(var r of c.clientConnections)
 											{
 												console.log("Send data to receivers");
 												r.socket.send(data);
 											}
+										}
 									}
 								}
 
@@ -296,7 +313,7 @@ module.exports = exports = function AetherConnections()
 							 */
 							 function receiverFunction(data, flags)
  							{
-
+								if()
  							}
 							 socket.removeAllListeners();
 							socket.on('message', receiverFunction);
@@ -620,29 +637,38 @@ module.exports = exports = function AetherConnections()
 	   */
 	this.pingClients = function()
 	{
-		var msg = "_ping";
-		for(i of this.receivers)
+		/* Remove clients */
+		for(var i in this.pingedConnections)
+		{
+			this.closeConnection(this.pingedConnections[i][1]);
+		}
+		/* Clear array */
+		this.pingedConnections = [];
+
+		var msgBase = "_ping";
+		var identifier = 0;
+		var arr = this.senders.concat(this.receivers);
+		arr = arr.concat(this.controllers);
+
+		for(var i of arr)
 		{
 			console.log("sending ping to");
 			console.log(i.clientName);
+
+			var msg = msgBase + identifier.toString();
+			console.log("msg: " + msg);
 			i.clientSocket.send(msg);
+			this.pingedConnections.push([msg, i.clientName]);
+
+			identifier ++;
 		}
+	}
 
-		for(i of this.senders)
-		{
-			console.log("sending ping to");
-			console.log(i.clientName);
-			i.clientSocket.send(msg);
-
-		}
-
-		for(i of this.controllers)
-		{
-			console.log("sending ping to");
-			console.log(i.clientName);
-			i.clientSocket.send(msg);
-
-		}
+	this.handlePing = function(msg)
+	{
+		console.log("Handling ping: " + msg);
+		var i = this.pingedConnections.findIndex(o => o[0] == msg);
+		this.pingedConnections.splice(i, 1);
 	}
 
 }
