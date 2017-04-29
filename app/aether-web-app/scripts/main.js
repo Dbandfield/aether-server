@@ -128,7 +128,7 @@ class App extends React.Component // Acces React by inheritance
 		console.log(data.data);
 		var substr = data.data.substring(0, 5);
 		console.log(substr);
-		if(data.data == '_ping')
+		if(substr == "_ping")
 		{
 			console.log("ping recv");
 			self.ws.send(data.data);
