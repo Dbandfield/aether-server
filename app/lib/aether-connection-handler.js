@@ -30,7 +30,7 @@ module.exports = exports = function AetherConnections()
 	this.processMessage = function(msg, socket)
 	{
 		console.log(msg);
-		var substr = msg.substring(0, 6);
+		var substr = msg.substring(0, 5);
 		console.log("Substr: " + substr);
 		if(substr == "_ping")
 		{
