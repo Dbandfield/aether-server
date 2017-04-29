@@ -81,7 +81,7 @@ module.exports = exports = function AetherConnections()
 	   Arguments:   The socket that was closed
 	   Returns:     Nothing
      */
-	this.closeConnection = function(socket)
+	this.closeConnectionBySocket = function(socket)
 	{
 		console.log("Closing connection");
 		/* Search senders */
@@ -132,6 +132,77 @@ module.exports = exports = function AetherConnections()
 
 		/* If we still havent returned, seach controllers */
 		indexToRemove1 = this.controllers.findIndex(i => i.clientSocket == socket);
+
+		if(indexToRemove1 != -1)
+		{
+			this.controllers.splice(indexToRemove1, 1);
+			return true;
+		}
+		else
+		{
+			console.error("The socket was not found when trying to remove the client")
+			return false;
+		}
+
+
+
+	}
+
+	/* Description: When the connection is closed, update everything.
+	   Arguments:   The name of the device that was closed
+	   Returns:     Nothing
+	 */
+	this.closeConnectionByName = function(name)
+	{
+		console.log("Closing connection");
+		/* Search senders */
+		var indexToRemove1 = this.senders.findIndex(obj => obj.clientName == name);
+
+		if(indexToRemove1 != -1) // If index found in senders
+		{
+			/* Go through its connections*/
+			for(var i of this.senders[indexToRemove1].clientConnections)
+			{
+				var nameToFind = i.name;
+				/* Get Object from recv list */
+				var ob = this.receivers.find(obj => obj.clientName == nameToFind);
+				/* Find match */
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.senders[indexToRemove1].clientName);
+				/* Remove from its connections */
+				ob.clientConnections.splice(indexToRemove2, 1);
+			}
+			/* Remove client */
+			this.senders.splice(indexToRemove1, 1);
+			/* Update the controllers */
+			this.updateControllers();
+			return true;
+		}
+
+		/* If we didn't return, search receivers */
+		indexToRemove1 = this.receivers.findIndex(obj => obj.clientName == name);
+
+		if(indexToRemove1 != -1) // If index found in receivers
+		{
+			/* Go through its connections*/
+			for(var i of this.receivers[indexToRemove1].clientConnections)
+			{
+				var nameToFind = i.name;
+				/* Get Object from recv list */
+				var ob = this.senders.find(obj => obj.clientName == nameToFind);
+				/* Find match */
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.receivers[indexToRemove1].clientName);
+				/* Remove from its connections */
+				ob.clientConnections.splice(indexToRemove2, 1);
+			}
+			/* Remove client */
+			this.receivers.splice(indexToRemove1, 1);
+			/* Update the controllers */
+			this.updateControllers();
+			return true;
+		}
+
+		/* If we still havent returned, seach controllers */
+		indexToRemove1 = this.controllers.findIndex(i => i.clientName == name);
 
 		if(indexToRemove1 != -1)
 		{
@@ -278,7 +349,7 @@ module.exports = exports = function AetherConnections()
 							}
 							socket.removeAllListeners();
 							socket.on('message', senderFunction);
-							socket.on('close', function(){myself.closeConnection(socket)});
+							socket.on('close', function(){myself.closeConnectionBySocket(socket)});
 							/*Success!*/
 							return true;
 							// break;
@@ -340,7 +411,7 @@ module.exports = exports = function AetherConnections()
  							}
 							 socket.removeAllListeners();
 							socket.on('message', receiverFunction);
-							socket.on('close', function(){myself.closeConnection(socket)});
+							socket.on('close', function(){myself.closeConnectionBySocket(socket)});
 
 							/* Success!*/
 							return true;
@@ -663,7 +734,7 @@ module.exports = exports = function AetherConnections()
 		/* Remove clients */
 		for(var i in this.pingedConnections)
 		{
-			this.closeConnection(this.pingedConnections[i][1]);
+			this.closeConnectionByName(this.pingedConnections[i][1]);
 		}
 		/* Clear array */
 		this.pingedConnections = [];
@@ -681,7 +752,7 @@ module.exports = exports = function AetherConnections()
 			var msg = msgBase + identifier.toString();
 			console.log("msg: " + msg);
 			i.clientSocket.send(msg);
-			this.pingedConnections.push([msg, i.clientSocket]);
+			this.pingedConnections.push([msg, i.clientName]);
 
 			identifier ++;
 		}
