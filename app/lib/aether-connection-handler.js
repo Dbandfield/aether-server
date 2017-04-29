@@ -690,7 +690,7 @@ module.exports = exports = function AetherConnections()
 		for(i of this.receivers)
 		{
 			console.log("sending ping to");
-			console.log(i);
+			console.log(i.clientName);
 			i.clientSocket.send(msg);
 			this.pingedConnections.push(i.clientName);
 		}
@@ -698,7 +698,7 @@ module.exports = exports = function AetherConnections()
 		for(i of this.senders)
 		{
 			console.log("sending ping to");
-			console.log(i);
+			console.log(i.clientName);
 			i.clientSocket.send(msg);
 			this.pingedConnections.push(i.clientName);
 
@@ -707,7 +707,7 @@ module.exports = exports = function AetherConnections()
 		for(i of this.controllers)
 		{
 			console.log("sending ping to");
-			console.log(i);
+			console.log(i.clientName);
 			i.clientSocket.send(msg);
 			this.pingedConnections.push(i.clientName);
 
