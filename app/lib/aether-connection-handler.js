@@ -247,7 +247,7 @@ module.exports = exports = function AetherConnections()
 									console.log("looking in senders");
 									if(c.clientSocket == socket)
 									{
-										var substr = data.substring(0, 6);
+										var substr = data.substring(0, 5);
 										console.log("Substr: " + substr);
 										if(substr == "_ping")
 										{
@@ -316,7 +316,7 @@ module.exports = exports = function AetherConnections()
 								console.log("looking in senders");
 								if(c.clientSocket == socket)
 								{
-									var substr = data.substring(0, 6);
+									var substr = data.substring(0, 5);
 									console.log("Substr: " + substr);
 									if(substr == "_ping")
 									{

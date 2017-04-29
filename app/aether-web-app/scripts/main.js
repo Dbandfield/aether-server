@@ -126,7 +126,7 @@ class App extends React.Component // Acces React by inheritance
 	handleWebSocketData(data, mask)
 	{
 		console.log(data.data);
-		var substr = data.data.substring(0, 6);
+		var substr = data.data.substring(0, 5);
 		console.log(substr);
 		if(data.data == '_ping')
 		{
