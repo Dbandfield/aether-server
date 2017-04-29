@@ -16,11 +16,6 @@ module.exports = exports = function AetherConnections()
 	/* Valid Data Types */
 	this.validDataTypes = ["pulse", "text", "number", "boolean"]
 
-	/* Ping data. */
-	/* Populated when a ping is sent. Depopuated when it receives
-	 	a response. Anything in the array has not responded, and so after a
-		set amount of time can be removed from the system. */
-	this.pingedConnections = [];
 
 	/*----- OBJECT METHODS -----*/
 
@@ -36,21 +31,6 @@ module.exports = exports = function AetherConnections()
 		if(msg == "_ping")
 		{
 			console.log("Received Ping");
-			/* Now remove from the ping list, because it has responded */
-			var obj = this.senders.find(o => o.clientSocket == socket);
-			if(obj == undefined)
-			{
-				obj = this.receivers.find(o => o.clientSocket == socket);
-				if(obj == undefined)
-				{
-					obj = this.controllers.find(o => o.clientSocket == socket);
-				}
-			}
-
-			var indexToRemove = this.pingedConnections.findIndex(c => c == obj.clientName);
-			console.log("pingedConnections index: ");
-			console.log(indexToRemove);
-			this.pingedConnections.splice(indexToRemove, 1);
 		}
 		else
 		{
@@ -260,23 +240,12 @@ module.exports = exports = function AetherConnections()
 									console.log("looking in senders");
 									if(c.clientSocket == socket)
 									{
-										console.log("Is ping?");
-										/* check if ping */
-										if(data == "_ping")
-										{
-											console.log("It is");
-											myself.handlePing(c.clientName);
-										}
-										else
-										{
-											console.log("It is not");
 											/* otherwise send data onto recievers */
 											for(var r of c.clientConnections)
 											{
 												console.log("Send data to receivers");
 												r.socket.send(data);
 											}
-										}
 									}
 								}
 
@@ -327,18 +296,6 @@ module.exports = exports = function AetherConnections()
 							 */
 							 function receiverFunction(data, flags)
  							{
-								/* Look for this socket in senders */
-								for(var c of myself.receivers)
-								{
-									if(c.clientSocket == socket)
-									{
-										/* check if ping */
-										if(data == "_ping")
-										{
-											myself.handlePing(c.clientName);
-										}
-									}
-								}
 
  							}
 							 socket.removeAllListeners();
@@ -663,36 +620,12 @@ module.exports = exports = function AetherConnections()
 	   */
 	this.pingClients = function()
 	{
-		/* First remove pinged connections that have not responded. When they
-		   respond they are removed from the array, so we simply remove everything
-		   that is still in there */
-		var obj;
-		for(i of this.pingedConnections)
-		{
-			obj = this.senders.find(o => o.clientName == i);
-			if(obj == undefined)
-			{
-				obj = this.receivers.find(o => o.clientName == i);
-				if(obj == undefined)
-				{
-					obj = this.controllers.find(o => o.clientName == i);
-				}
-			}
-			console.log("Closing ");
-			console.log(i);
-			var inToRemove = this.pingedConnections.indexOf(i);
-			this.pingedConnections.splice(inToRemove, 1);
-			this.closeConnection(obj.clientSocket);
-		}
-
-
 		var msg = "_ping";
 		for(i of this.receivers)
 		{
 			console.log("sending ping to");
 			console.log(i.clientName);
 			i.clientSocket.send(msg);
-			this.pingedConnections.push(i.clientName);
 		}
 
 		for(i of this.senders)
@@ -700,7 +633,6 @@ module.exports = exports = function AetherConnections()
 			console.log("sending ping to");
 			console.log(i.clientName);
 			i.clientSocket.send(msg);
-			this.pingedConnections.push(i.clientName);
 
 		}
 
@@ -709,16 +641,8 @@ module.exports = exports = function AetherConnections()
 			console.log("sending ping to");
 			console.log(i.clientName);
 			i.clientSocket.send(msg);
-			this.pingedConnections.push(i.clientName);
 
 		}
 	}
 
-	this.handlePing = function(name)
-	{
-		console.log("Handling Ping");
-		console.log(name);
-		var i = this.pingedConnections.findIndex(o => o == name);
-		this.pingedConnections.splice(i, 1);
-	}
 }
