@@ -644,20 +644,20 @@ module.exports = exports = function AetherConnections()
 		for(i of this.receivers)
 		{
 			i.clientSocket.send(msg);
-			pingedConnections.push(i.clientSocket);
+			this.pingedConnections.push(i.clientSocket);
 		}
 
 		for(i of this.senders)
 		{
 			i.clientSocket.send(msg);
-			pingedConnections.push(i.clientSocket);
+			this.pingedConnections.push(i.clientSocket);
 
 		}
 
 		for(i of this.controllers)
 		{
 			i.clientSocket.send(msg);
-			pingedConnections.push(i.clientSocket);
+			this.pingedConnections.push(i.clientSocket);
 
 		}
 	}
