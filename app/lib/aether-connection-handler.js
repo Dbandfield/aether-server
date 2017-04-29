@@ -252,6 +252,7 @@ module.exports = exports = function AetherConnections()
 										if(substr == "_ping")
 										{
 											var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
+											console.log(ndx);
 											myself.pingedConnections.splice(ndx, 1);
 										}
 										else
