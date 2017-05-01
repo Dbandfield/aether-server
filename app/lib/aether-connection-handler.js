@@ -87,7 +87,7 @@ module.exports = exports = function AetherConnections()
 
 		if(indexToRemove1 != -1) // If index found in senders
 		{
-			console.log("Closing connection: " + this.senders[indexToRemove].clientName);
+			console.log("Closing connection: " + this.senders[indexToRemove1].clientName);
 			/* Go through its connections*/
 			for(var i of this.senders[indexToRemove1].clientConnections)
 			{
