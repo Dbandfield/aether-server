@@ -29,12 +29,10 @@ module.exports = exports = function AetherConnections()
      */
 	this.processMessage = function(msg, socket)
 	{
-		console.log(msg);
 		var substr = msg.substring(0, 5);
-		console.log("Substr: " + substr);
 		if(substr == "_ping")
 		{
-			console.log("Received Ping");
+			console.log("Received Ping: " + msg);
 			var ndx = myself.pingedConnections.findIndex(o => o[0] == msg);
 			myself.pingedConnections.splice(ndx, 1);
 		}
@@ -83,12 +81,13 @@ module.exports = exports = function AetherConnections()
      */
 	this.closeConnectionBySocket = function(socket)
 	{
-		console.log("Closing connection");
+
 		/* Search senders */
 		var indexToRemove1 = this.senders.findIndex(obj => obj.clientSocket == socket);
 
 		if(indexToRemove1 != -1) // If index found in senders
 		{
+			console.log("Closing connection: " + this.senders[indexToRemove].clientName);
 			/* Go through its connections*/
 			for(var i of this.senders[indexToRemove1].clientConnections)
 			{
@@ -112,6 +111,7 @@ module.exports = exports = function AetherConnections()
 
 		if(indexToRemove1 != -1) // If index found in receivers
 		{
+			console.log("Closing connection: " + this.senders[indexToRemove].clientName);
 			/* Go through its connections*/
 			for(var i of this.receivers[indexToRemove1].clientConnections)
 			{
@@ -135,12 +135,13 @@ module.exports = exports = function AetherConnections()
 
 		if(indexToRemove1 != -1)
 		{
+			console.log("Closing connection: " + this.senders[indexToRemove].clientName);
 			this.controllers.splice(indexToRemove1, 1);
 			return true;
 		}
 		else
 		{
-			console.error("The socket was not found when trying to remove the client")
+			console.error("The socket was not found when trying to remove the client by socket")
 			return false;
 		}
 
@@ -154,7 +155,7 @@ module.exports = exports = function AetherConnections()
 	 */
 	this.closeConnectionByName = function(name)
 	{
-		console.log("Closing connection");
+		console.log("Closing connection " + name);
 		/* Search senders */
 		var indexToRemove1 = this.senders.findIndex(obj => obj.clientName == name);
 
@@ -211,7 +212,7 @@ module.exports = exports = function AetherConnections()
 		}
 		else
 		{
-			console.error("The socket was not found when trying to remove the client")
+			console.error("The socket was not found when trying to remove the client by name")
 			return false;
 		}
 
@@ -311,19 +312,16 @@ module.exports = exports = function AetherConnections()
 							 */
 							function senderFunction(data, flags)
 							{
-								console.log("Sender function");
 								/* Look for this socket in senders */
 								for(var c of myself.senders)
 								{
-									console.log("looking in senders");
 									if(c.clientSocket == socket)
 									{
 										var substr = data.substring(0, 5);
-										console.log("Substr: " + substr);
 										if(substr == "_ping")
 										{
 											var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
-											console.log(ndx);
+
 											myself.pingedConnections.splice(ndx, 1);
 										}
 										else
@@ -333,12 +331,11 @@ module.exports = exports = function AetherConnections()
 											{
 												if(r.socket.readyState == 1) //open
 												{
-													console.log("Send data to receivers");
 													r.socket.send(data);
 												}
 												else
 												{
-													console.log("Not open");
+
 												}
 
 											}
@@ -395,15 +392,12 @@ module.exports = exports = function AetherConnections()
  							{
 								for(var c of myself.receivers)
 								{
-									console.log("looking in receivers");
 									if(c.clientSocket == socket)
 									{
 										var substr = data.substring(0, 5);
-										console.log("Substr: " + substr);
 										if(substr == "_ping")
 										{
 											var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
-											console.log(ndx);
 											myself.pingedConnections.splice(ndx, 1);
 										}
 									}
@@ -746,11 +740,10 @@ module.exports = exports = function AetherConnections()
 
 		for(var i of arr)
 		{
-			console.log("sending ping to");
-			console.log(i.clientName);
+
 
 			var msg = msgBase + identifier.toString();
-			console.log("msg: " + msg);
+			console.log("sending ping to " + i.clientName + " : " + msg);
 			i.clientSocket.send(msg);
 			this.pingedConnections.push([msg, i.clientName]);
 
