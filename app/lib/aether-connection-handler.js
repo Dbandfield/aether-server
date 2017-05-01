@@ -294,6 +294,7 @@ module.exports = exports = function AetherConnections()
 						/* if match */
 						if(msg.messageContent.dataType == i)
 						{
+							console.log("Registering Sender " + uniqueName);
 							/* add to the array */
 							this.senders.push(
 							{
@@ -312,14 +313,17 @@ module.exports = exports = function AetherConnections()
 							 */
 							function senderFunction(data, flags)
 							{
+
 								/* Look for this socket in senders */
 								for(var c of myself.senders)
 								{
+									console.log("Received message from " + c.clientName);
 									if(c.clientSocket == socket)
 									{
 										var substr = data.substring(0, 5);
 										if(substr == "_ping")
 										{
+											console.log("Message is ping");
 											var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
 
 											myself.pingedConnections.splice(ndx, 1);
