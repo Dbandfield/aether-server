@@ -135,7 +135,7 @@ module.exports = exports = function AetherConnections()
 
 		if(indexToRemove1 != -1)
 		{
-			console.log("Closing connection: " + this.senders[indexToRemove1].clientName);
+			console.log("Closing connection: " + this.controllers[indexToRemove1].clientName);
 			this.controllers.splice(indexToRemove1, 1);
 			return true;
 		}
