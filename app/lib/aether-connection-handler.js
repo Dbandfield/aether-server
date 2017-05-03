@@ -95,7 +95,7 @@ module.exports = exports = function AetherConnections()
 				/* Get Object from recv list */
 				var ob = this.receivers.find(obj => obj.clientName == nameToFind);
 				/* Find match */
-				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.senders[indexToRemove1].clientName);
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.name == this.senders[indexToRemove1].clientName);
 				/* Remove from its connections */
 				ob.clientConnections.splice(indexToRemove2, 1);
 			}
@@ -119,7 +119,7 @@ module.exports = exports = function AetherConnections()
 				/* Get Object from recv list */
 				var ob = this.senders.find(obj => obj.clientName == nameToFind);
 				/* Find match */
-				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.receivers[indexToRemove1].clientName);
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.name == this.receivers[indexToRemove1].clientName);
 				/* Remove from its connections */
 				ob.clientConnections.splice(indexToRemove2, 1);
 			}
@@ -168,7 +168,7 @@ module.exports = exports = function AetherConnections()
 				/* Get Object from recv list */
 				var ob = this.receivers.find(obj => obj.clientName == nameToFind);
 				/* Find match */
-				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.senders[indexToRemove1].clientName);
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.name == this.senders[indexToRemove1].clientName);
 
 				console.log("Removing " + ob.clientConnections[indexToRemove2].name + " from " + ob.clientName);
 				/* Remove from its connections */
@@ -193,7 +193,7 @@ module.exports = exports = function AetherConnections()
 				/* Get Object from recv list */
 				var ob = this.senders.find(obj => obj.clientName == nameToFind);
 				/* Find match */
-				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.clientName == this.receivers[indexToRemove1].clientName);
+				indexToRemove2 = ob.clientConnections.findIndex(obj => obj.name == this.receivers[indexToRemove1].clientName);
 				/* Remove from its connections */
 				ob.clientConnections.splice(indexToRemove2, 1);
 			}
