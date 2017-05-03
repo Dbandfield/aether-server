@@ -32,7 +32,7 @@ module.exports = exports = function AetherConnections()
 		var substr = msg.substring(0, 5);
 		if(substr == "_ping")
 		{
-			console.log("Received Ping: " + msg);
+			//console.log("Received Ping: " + msg);
 			var ndx = myself.pingedConnections.findIndex(o => o[0] == msg);
 			myself.pingedConnections.splice(ndx, 1);
 		}
@@ -323,7 +323,6 @@ module.exports = exports = function AetherConnections()
 										var substr = data.substring(0, 5);
 										if(substr == "_ping")
 										{
-											console.log("Message is ping");
 											var ndx = myself.pingedConnections.findIndex(o => o[0] == data);
 
 											myself.pingedConnections.splice(ndx, 1);
@@ -378,7 +377,7 @@ module.exports = exports = function AetherConnections()
 						/* if match */
 						if(msg.messageContent.dataType == i)
 						{
-
+							console.log("Registering Receiver " + uniqueName);
 							this.receivers.push(
 							{
 								clientName   	: uniqueName,
@@ -398,6 +397,7 @@ module.exports = exports = function AetherConnections()
 								{
 									if(c.clientSocket == socket)
 									{
+										console.log("Received message from " + c.clientName);
 										var substr = data.substring(0, 5);
 										if(substr == "_ping")
 										{
@@ -747,7 +747,7 @@ module.exports = exports = function AetherConnections()
 
 
 			var msg = msgBase + identifier.toString();
-			console.log("sending ping to " + i.clientName + " : " + msg);
+			//console.log("sending ping to " + i.clientName + " : " + msg);
 			i.clientSocket.send(msg);
 			this.pingedConnections.push([msg, i.clientName]);
 
